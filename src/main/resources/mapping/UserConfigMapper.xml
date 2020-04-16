@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo1.dao.UserConfigMapper">
+
+    <insert id="insertUserConfig">
+        insert into `user_config`(userid, username, mainfolder, passwordtype)
+        value (#{userid},#{username},#{mainfolder},#{passwordtype})
+    </insert>
+
+    <select id="selectUserConfigByUserid" resultType="com.example.demo1.entity.UserConfig">
+        select * from `user_config` where userid = #{userid}
+    </select>
+
+</mapper>
