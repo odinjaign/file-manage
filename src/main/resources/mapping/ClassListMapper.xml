@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo1.dao.ClassListMapper">
+
+    <select id="selectAll" resultType="com.example.demo1.entity.ClassList">
+        select *
+        from class_list
+    </select>
+    <insert id="insertClassList">
+        insert into class_list(userid, classtype, checkfolder, checklength, checkexts, checktime)
+            value (#{userid}, #{classtype}, #{checkfolder}, #{checklength}, #{checkexts}, now())
+    </insert>
+    <update id="updateClassList">
+        update class_list
+        set checklength=#{checklength},
+            checkexts=#{checkexts}
+        where userid = #{userid}
+          and classtype = #{classtype}
+          and checkfolder = #{checkfolder}
+    </update>
+    <delete id="deleteClassList">
+        delete
+        from class_list
+        where userid = #{userid}
+          and classtype = #{classtype}
+          and checkfolder = #{checkfolder}
+    </delete>
+</mapper>
