@@ -7,10 +7,14 @@ import com.example.demo1.entity.User;
 import com.example.demo1.enums.ClassType;
 import com.example.demo1.service.ClassManageService;
 import com.example.demo1.util.FileOptUtil;
+import com.example.demo1.util.StringOptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class ClassManageServiceImpl implements ClassManageService {
@@ -133,6 +137,24 @@ public class ClassManageServiceImpl implements ClassManageService {
         send.setCode(0);
         send.setMsg("删除成功");
         return send;
+    }
+
+    @Override
+    public List<File> getFile(ClassList list) {
+        List<File> files = new ArrayList<>();
+        File folder = new File(list.getCheckfolder());
+        int num = list.getChecklength();
+        String exts = list.getCheckexts();
+        List<File> allFiles = FileOptUtil.lsFile2Num(new ArrayList<File>(), folder, num);
+        Iterator<File> iterator = allFiles.iterator();
+        while (iterator.hasNext()) {
+            File file = iterator.next();
+            String ext = StringOptUtil.fileExt(file.getName());
+            if (!StringOptUtil.extInExts(ext, exts)){
+                iterator.remove();
+            }
+        }
+        return allFiles;
     }
 
     private ClassType typeOf(String type) {

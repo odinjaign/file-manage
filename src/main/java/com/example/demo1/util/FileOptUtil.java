@@ -4,6 +4,8 @@ import cn.hutool.core.io.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileOptUtil {
 
@@ -27,7 +29,7 @@ public class FileOptUtil {
         return fileInFolder(filepath, new File(folderpath));
     }
 
-    public static boolean createFile(File file){
+    public static boolean createFile(File file) {
         try {
             return file.createNewFile();
         } catch (IOException e) {
@@ -36,7 +38,20 @@ public class FileOptUtil {
         return false;
     }
 
-    public static boolean createFolder(File folder){
+    public static boolean createFolder(File folder) {
         return FileUtil.mkdir(folder).exists();
     }
+
+    public static List<File> lsFile2Num(List<File> rel, File folder, int num) {
+        if (num == 0) return rel;
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                rel = lsFile2Num(rel, file, num - 1);
+            } else {
+                rel.add(file);
+            }
+        }
+        return rel;
+    }
+
 }

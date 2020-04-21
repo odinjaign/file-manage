@@ -6,6 +6,12 @@
         select *
         from class_list
     </select>
+    <select id="selectByTypeAndUser" resultType="com.example.demo1.entity.ClassList">
+        select *
+        from class_list
+        where userid = #{userid}
+          and classtype = #{type}
+    </select>
     <insert id="insertClassList">
         insert into class_list(userid, classtype, checkfolder, checklength, checkexts, checktime)
             value (#{userid}, #{classtype}, #{checkfolder}, #{checklength}, #{checkexts}, now())

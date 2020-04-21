@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface ClassListMapper {
     List<ClassList> selectAll();
+    List<ClassList> selectByTypeAndUser(int type,int userid);
     int insertClassList(ClassList classList);
 
     int updateClassList(ClassList classList);
