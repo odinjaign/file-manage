@@ -1,13 +1,10 @@
 package com.example.demo1.test;
 
-import cn.hutool.core.io.FileUtil;
-import com.example.demo1.enums.ClassType;
-import com.example.demo1.util.FileOptUtil;
-import com.example.demo1.util.MovieOptUtil;
-import com.example.demo1.util.StringOptUtil;
-import com.mpatric.mp3agic.*;
+import cn.hutool.json.JSONUtil;
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
+import javafx.util.Pair;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +53,13 @@ public class Main {
 //                System.out.println("Album image mime type: " + id3v2Tag.getAlbumImageMimeType());
 //            }
 //        }
-            }
+
+
+        List<Pair<Integer, Integer>> list = new ArrayList<>();
+        list.add(new Pair<>(5,6));
+        list.add(new Pair<>(7,8));
+        list.add(new Pair<>(7,0));
+        list.add(new Pair<>(5,2));
+        System.out.println(JSONUtil.parse(list).toStringPretty());
+    }
 }

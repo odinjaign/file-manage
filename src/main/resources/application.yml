@@ -19,3 +19,15 @@ logging:
 jaign:
   config:
     free-space-root: C:/Users/jaign/test/
+    document-type:
+      pdf:
+        - pdf
+      word:
+        - doc
+        - docx
+      ppt:
+        - ppt
+        - pptx
+      excel:
+        - xls
+        - xlsx
