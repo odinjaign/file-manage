@@ -1,13 +1,17 @@
 package com.example.demo1.service;
 
+import com.example.demo1.dto.send.NormalSend;
+
 public interface MainListService {
     void initCacheList();
 
     String getNowUserRootFolder();
 
-    boolean enterfolder(String folder);
+    NormalSend enterfolder(String folder,boolean isEnter);
 
-    boolean returnlast();
+    NormalSend returnlast();
 
     void updateCache();
+
+    NormalSend enterfolderByPassword(String folder, String password);
 }

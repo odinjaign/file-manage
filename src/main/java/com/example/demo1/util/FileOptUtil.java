@@ -1,13 +1,22 @@
 package com.example.demo1.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileOptUtil {
+
+    public static String getFolderTextPassword(String folder) {
+        File file = new File(folder, "password.txt");
+        if (file.exists()) {
+            return new FileReader(file).readString();
+        } else {
+            return null;
+        }
+    }
 
     public static boolean fileInFolder(File file, File folder) {
         String folderpath = folder.getPath() + "\\";

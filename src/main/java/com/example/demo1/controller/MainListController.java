@@ -1,6 +1,7 @@
 package com.example.demo1.controller;
 
 import com.example.demo1.dto.send.MainListDTOSend;
+import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.service.impl.MainListServiceImpl;
 import com.example.demo1.util.CacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -72,7 +71,7 @@ public class MainListController {
      * @return 上一级
      */
     @PostMapping("returnlast")
-    public boolean returnlast(){
+    public NormalSend returnlast(){
         return mainListServiceImpl.returnlast();
     }
 
@@ -81,8 +80,11 @@ public class MainListController {
      * @return 下一级
      */
     @PostMapping("enterfolder")
-    public boolean enterfolder(String folder){
-
-        return mainListServiceImpl.enterfolder(folder);
+    public NormalSend enterfolder(String folder,String password){
+        if(password == null){
+            return mainListServiceImpl.enterfolder(folder,true);
+        }else {
+            return mainListServiceImpl.enterfolderByPassword(folder,password);
+        }
     }
 }

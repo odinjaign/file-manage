@@ -2,10 +2,13 @@ package com.example.demo1.service.impl;
 
 import com.example.demo1.dao.UserConfigMapper;
 import com.example.demo1.dto.send.MainListDTOSend;
+import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.entity.User;
 import com.example.demo1.entity.UserConfig;
+import com.example.demo1.enums.FolderPasswordType;
 import com.example.demo1.service.MainListService;
 import com.example.demo1.util.CacheUtil;
+import com.example.demo1.util.FileOptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ public class MainListServiceImpl implements MainListService {
     private UserConfigMapper userConfigMapper;
     @Autowired
     private FileListServiceImpl fileListServiceImpl;
+    @Autowired
+    private UserConfigServiceImpl userConfigServiceImpl;
 
 
     @Override
@@ -41,36 +46,82 @@ public class MainListServiceImpl implements MainListService {
         int userid = user.getId();
         //得到当前用户主目录
         UserConfig userConfig = userConfigMapper.selectUserConfigByUserid(userid);
-        String mainfolder = userConfig.getMainfolder();
-        return mainfolder;
+        return userConfig.getMainfolder();
     }
 
     @Override
-    public boolean enterfolder(String folder) {
+    public NormalSend enterfolder(String folder,boolean isEnter) {
+        NormalSend send = new NormalSend();
+        // 判断文件夹加密
+        // 文本密码
+        FolderPasswordType passwordStatus = userConfigServiceImpl.folderPasswordStatus();
+        switch (passwordStatus) {
+            case 关闭:
+                break;
+            case 文本密码:
+                String password = FileOptUtil.getFolderTextPassword(folder);
+                if (password != null && isEnter){
+                    //进入文件夹操作才判断密码
+                    //文件夹被加密
+                    send.setCode(-1);
+                    send.setMsg("进入文件夹失败，文件夹被加密");
+                    return send;
+                }
+                break;
+            case 数据库密码:
+                //todo 数据库密码
+        }
+
         //进入文件夹
         cacheUtil.getAndSet("pwd", folder);
         List<MainListDTOSend.FileNode> fileList = fileListServiceImpl.getFileList(folder);
         cacheUtil.delete("main_list");
         cacheUtil.setList("main_list", fileList);
-        return true;
+        send.setCode(0);
+        send.setMsg("进入文件夹成功");
+        return send;
     }
 
     @Override
-    public boolean returnlast() {
+    public NormalSend returnlast() {
+        NormalSend send = new NormalSend();
         //得到用户根目录
         File rootFolder = new File(getNowUserRootFolder());
         File pwd = new File(cacheUtil.get("pwd"));
         if (rootFolder.equals(pwd)) {
             //当前目录为根目录
-            return false;
+            send.setCode(-1);
+            send.setMsg("当前目录为用户跟目录");
+            return send;
         } else {
-            return enterfolder(pwd.getParent());
+            NormalSend enterfolder = enterfolder(pwd.getParent(),false);
+            return enterfolder;
         }
     }
 
     @Override
     public void updateCache(){
-        enterfolder(cacheUtil.get("pwd"));
+        enterfolder(cacheUtil.get("pwd"),false);
+    }
+
+    @Override
+    public NormalSend enterfolderByPassword(String folder, String password) {
+        NormalSend send = new NormalSend();
+        String realPassword = FileOptUtil.getFolderTextPassword(folder);
+        if (password.equals(realPassword)){
+            //密码正确
+            //进入文件夹
+            cacheUtil.getAndSet("pwd", folder);
+            List<MainListDTOSend.FileNode> fileList = fileListServiceImpl.getFileList(folder);
+            cacheUtil.delete("main_list");
+            cacheUtil.setList("main_list", fileList);
+            send.setCode(0);
+            send.setMsg("进入文件夹成功");
+            return send;
+        }
+        send.setCode(-2);
+        send.setMsg("密码错误");
+        return send;
     }
 
 }
