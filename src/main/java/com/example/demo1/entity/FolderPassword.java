@@ -4,7 +4,7 @@ public class FolderPassword {
     private int id;
     private int userid;
     private String folderpath;
-    private String folderpathword;
+    private String folderpassword;
     private int status;
 
     public int getId() {
@@ -31,19 +31,19 @@ public class FolderPassword {
         this.folderpath = folderpath;
     }
 
-    public String getFolderpathword() {
-        return folderpathword;
-    }
-
-    public void setFolderpathword(String folderpathword) {
-        this.folderpathword = folderpathword;
-    }
-
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getFolderpassword() {
+        return folderpassword;
+    }
+
+    public void setFolderpassword(String folderpassword) {
+        this.folderpassword = folderpassword;
     }
 }

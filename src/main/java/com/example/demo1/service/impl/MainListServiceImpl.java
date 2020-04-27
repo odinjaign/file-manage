@@ -26,6 +26,8 @@ public class MainListServiceImpl implements MainListService {
     private FileListServiceImpl fileListServiceImpl;
     @Autowired
     private UserConfigServiceImpl userConfigServiceImpl;
+    @Autowired
+    private FolderPasswordDBServiceImpl folderPasswordDBServiceImpl;
 
 
     @Override
@@ -64,12 +66,21 @@ public class MainListServiceImpl implements MainListService {
                     //进入文件夹操作才判断密码
                     //文件夹被加密
                     send.setCode(-1);
-                    send.setMsg("进入文件夹失败，文件夹被加密");
+                    send.setMsg("进入文件夹失败，文件夹被加密[TXT]");
                     return send;
                 }
                 break;
             case 数据库密码:
                 //todo 数据库密码
+                String passwordDB = folderPasswordDBServiceImpl.getPassword(folder);
+                if (passwordDB != null && isEnter){
+                    //进入文件夹操作才判断密码
+                    //文件夹被加密
+                    send.setCode(-1);
+                    send.setMsg("进入文件夹失败，文件夹被加密[DB]");
+                    return send;
+                }
+                break;
         }
 
         //进入文件夹
@@ -107,7 +118,23 @@ public class MainListServiceImpl implements MainListService {
     @Override
     public NormalSend enterfolderByPassword(String folder, String password) {
         NormalSend send = new NormalSend();
-        String realPassword = FileOptUtil.getFolderTextPassword(folder);
+        // 判断文件夹加密
+        // 文本密码
+        FolderPasswordType passwordStatus = userConfigServiceImpl.folderPasswordStatus();
+        String realPassword = null;
+        switch (passwordStatus) {
+            case 关闭:
+                break;
+            case 文本密码:
+                realPassword= FileOptUtil.getFolderTextPassword(folder);
+                break;
+            case 数据库密码:
+                //todo 数据库密码
+                realPassword = folderPasswordDBServiceImpl.getPassword(folder);
+                break;
+        }
+
+
         if (password.equals(realPassword)){
             //密码正确
             //进入文件夹

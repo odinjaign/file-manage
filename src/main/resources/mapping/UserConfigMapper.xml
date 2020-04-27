@@ -4,11 +4,20 @@
 
     <insert id="insertUserConfig">
         insert into `user_config`(userid, username, mainfolder, passwordtype)
-        value (#{userid},#{username},#{mainfolder},#{passwordtype})
+            value (#{userid}, #{username}, #{mainfolder}, #{passwordtype})
     </insert>
 
     <select id="selectUserConfigByUserid" resultType="com.example.demo1.entity.UserConfig">
-        select * from `user_config` where userid = #{userid}
+        select *
+        from `user_config`
+        where userid = #{userid}
     </select>
+
+    <update id="updateUserConfig">
+        update user_config
+        set mainfolder  = #{mainfolder},
+            passwordtype=#{passwordtype}
+        where userid = #{userid}
+    </update>
 
 </mapper>

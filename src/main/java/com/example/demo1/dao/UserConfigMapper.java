@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 public interface UserConfigMapper {
     void insertUserConfig(UserConfig userConfig);
     UserConfig selectUserConfigByUserid(int userid);
+    void updateUserConfig(UserConfig userConfig);
 }
