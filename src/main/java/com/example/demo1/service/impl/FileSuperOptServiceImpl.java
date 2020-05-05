@@ -1,9 +1,12 @@
 package com.example.demo1.service.impl;
 
+import cn.hutool.core.util.ZipUtil;
 import com.example.demo1.dto.send.FileOptSend;
+import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.service.FileSuperOptService;
 import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.FileOptUtil;
+import com.example.demo1.util.StringOptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -93,7 +96,7 @@ public class FileSuperOptServiceImpl implements FileSuperOptService {
     @Override
     public FileOptSend downloadFile(String filepath, HttpServletResponse response) {
         FileOptSend send = new FileOptSend();
-        File  file = new File(filepath);
+        File file = new File(filepath);
         if (!file.exists()) {
             send.setCode(-1);
             send.setMsg("文件不存在");
@@ -104,7 +107,7 @@ public class FileSuperOptServiceImpl implements FileSuperOptService {
         BufferedInputStream bis = null;
         try {
             response.setContentType("application/force-download");// 设置强制下载不打开
-            response.addHeader("Content-Disposition", "attachment;fileName="+java.net.URLEncoder.encode(file.getName(), "UTF-8"));
+            response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(file.getName(), "UTF-8"));
             byte[] buffer = new byte[1024];
             fis = new FileInputStream(file);
             bis = new BufferedInputStream(fis);
@@ -119,6 +122,59 @@ public class FileSuperOptServiceImpl implements FileSuperOptService {
         }
         send.setCode(0);
         send.setMsg("文件下载成功");
+        return send;
+    }
+
+    @Override
+    public NormalSend unzip(String file, String folder) {
+        NormalSend send = new NormalSend();
+        File optFile = new File(file);
+        if (!"zip".equals(StringOptUtil.fileExt(file).toLowerCase())) {
+            send.setCode(-1);
+            send.setMsg("解压文件类型错误");
+            return send;
+        }
+        if (!optFile.exists()) {
+            send.setCode(-2);
+            send.setMsg("文件不存在");
+            return send;
+        }
+        File unzipPath;
+        if (folder == null) {
+            unzipPath = ZipUtil.unzip(optFile);
+        } else {
+            unzipPath = ZipUtil.unzip(optFile, new File(folder));
+        }
+        send.setCode(0);
+        send.setMsg("文件已经解压到" + unzipPath.getPath());
+        mainListServiceImpl.updateCache();
+        return send;
+    }
+
+    @Override
+    public NormalSend zip(String folder, String dst) {
+        NormalSend send = new NormalSend();
+        File optFolder = new File(folder);
+        if (!optFolder.exists()) {
+            send.setCode(-1);
+            send.setMsg("需要压缩的目录路径错误");
+            return send;
+        }
+
+        if (optFolder.isFile()){
+            send.setCode(-2);
+            send.setMsg("目前只能压缩目录");
+            return send;
+        }
+        File outZipFile;
+        if (dst == null){
+            outZipFile = ZipUtil.zip(optFolder.getPath());
+        }else {
+            outZipFile = ZipUtil.zip(optFolder.getPath(),dst,true);
+        }
+        send.setCode(0);
+        send.setMsg("目录压缩为" + outZipFile.getPath());
+        mainListServiceImpl.updateCache();
         return send;
     }
 }

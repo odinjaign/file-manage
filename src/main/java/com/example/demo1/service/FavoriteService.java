@@ -13,4 +13,6 @@ public interface FavoriteService {
     void updateCacheList();
 
     NormalSend removeFavorite(File file);
+
+    boolean isFavorite(File file);
 }

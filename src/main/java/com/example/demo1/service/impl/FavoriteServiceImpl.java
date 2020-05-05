@@ -114,4 +114,13 @@ public class FavoriteServiceImpl implements FavoriteService {
         updateCacheList();
         return send;
     }
+
+    @Override
+    public boolean isFavorite(File file) {
+        if (loginServiceImpl.getNowUser()==null) {
+            return false;
+        }
+        int userid = loginServiceImpl.getNowUser().getId();
+        return favoriteMapper.selectFavoriteByPath(userid, file.getPath()) != null;
+    }
 }

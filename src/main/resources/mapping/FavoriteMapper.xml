@@ -13,4 +13,8 @@
     <delete id="deleteFavorite">
         delete from favorite where userid=#{userid} and favoritepath=#{path}
     </delete>
+
+    <select id="selectFavoriteByPath" resultType="com.example.demo1.entity.Favorite">
+        select * from favorite where userid=#{userid} and favoritepath=#{path}
+    </select>
 </mapper>

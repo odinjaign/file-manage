@@ -23,6 +23,8 @@ public class FileListServiceImpl implements FileListService {
     private HideManageServiceImpl hideManageServiceImpl;
     @Autowired
     private SysConfigServiceImpl sysConfigServiceImpl;
+    @Autowired
+    private FavoriteServiceImpl favoriteServiceImpl;
 
 
     @Override
@@ -61,13 +63,19 @@ public class FileListServiceImpl implements FileListService {
                     continue;
                 }
             }
-            //
+            //2. 判断文件是否被收藏
+            boolean isFavrite = false;
+            if (configData.isFavorite()){
+                isFavrite = favoriteServiceImpl.isFavorite(file);
+            }
+
             MainListDTOSend.FileNode fileNode = new MainListDTOSend.FileNode();
             fileNode.setUpdatetime(new Date(file.lastModified()));
             fileNode.setType(file.isFile() ? "文件" : "文件夹");
             fileNode.setSize(file.isFile() ? file.length() / 1024 : 0);
             fileNode.setFolder(!file.isFile());
-            fileNode.setFavorite(false);
+            //是否开启收藏功能
+            fileNode.setFavorite(isFavrite);//判断文件是否被收藏
             fileNode.setPath(file.getPath());
             fileNode.setName(file.getName());
             fileNodes.add(fileNode);

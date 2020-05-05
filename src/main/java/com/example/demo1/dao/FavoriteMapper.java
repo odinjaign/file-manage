@@ -11,4 +11,5 @@ public interface FavoriteMapper {
     List<Favorite> selectAll();
 
     void deleteFavorite(int userid, String path);
+    Favorite selectFavoriteByPath(int userid, String path);
 }
