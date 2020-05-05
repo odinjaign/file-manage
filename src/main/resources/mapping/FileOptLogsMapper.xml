@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo1.dao.FileOptLogsMapper">
+
+    <insert id="insertLog">
+        insert into file_opt_logs(userid, logindex, logtype, logpath, logpathext, logtime, lognote)
+            value (#{userid}, #{logindex}, #{logtype}, #{logpath}, #{logpathext}, #{logtime}, #{lognote})
+    </insert>
+
+    <select id="selectMaxIndex" resultType="Integer">
+        select max(logindex) from file_opt_logs where userid = #{userid}
+    </select>
+
+    <select id="selectLogsByUserid" resultType="com.example.demo1.entity.FileOptLogs">
+        select * from file_opt_logs where userid=#{userid}
+    </select>
+</mapper>

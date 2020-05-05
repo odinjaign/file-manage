@@ -6,7 +6,7 @@ public class User {
     private String passwords;
     private String email;
     private String nickname;
-    private int gender;
+    private int gender; // 1男 2女
     private int usertype;
 
     public int getId() {

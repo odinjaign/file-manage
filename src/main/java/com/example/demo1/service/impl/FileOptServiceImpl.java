@@ -15,6 +15,8 @@ public class FileOptServiceImpl implements FileOptService {
 
     @Autowired
     private MainListServiceImpl mainListServiceImpl;
+    @Autowired
+    private OptLogServiceImpl optLogServiceImpl;
 
 
     /**
@@ -48,8 +50,13 @@ public class FileOptServiceImpl implements FileOptService {
         }
 
         FileUtil.copy(src, folder, true);
+        //日志记录
+
         send.setCode(0);
         send.apendMsg("复制成功!");
+        if (!optLogServiceImpl.logCopy(src, folder)) {
+            send.apendMsg("日志记录失败");
+        }
         mainListServiceImpl.updateCache();
         return send;
     }
@@ -80,6 +87,9 @@ public class FileOptServiceImpl implements FileOptService {
         FileUtil.move(src,folder,true);
         send.setCode(0);
         send.apendMsg("移动成功!");
+        if (!optLogServiceImpl.logMove(src, folder)) {
+            send.apendMsg("日志记录失败");
+        }
         mainListServiceImpl.updateCache();
         return send;
     }
@@ -90,6 +100,9 @@ public class FileOptServiceImpl implements FileOptService {
         FileUtil.rename(src,newname,false,true);
         send.setCode(0);
         send.setMsg("重命名成功!");
+        if (!optLogServiceImpl.logRename(src, newname)) {
+            send.apendMsg("日志记录失败");
+        }
         mainListServiceImpl.updateCache();
         return send;
     }
@@ -110,6 +123,9 @@ public class FileOptServiceImpl implements FileOptService {
         }
         send.setCode(0);
         send.setMsg("文件删除成功!");
+        if (!optLogServiceImpl.logDel(file)) {
+            send.apendMsg("日志记录失败");
+        }
         mainListServiceImpl.updateCache();
         return send;
     }

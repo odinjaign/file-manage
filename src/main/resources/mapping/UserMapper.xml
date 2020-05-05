@@ -4,11 +4,31 @@
 
     <insert id="insertUser">
         insert into `user`(username, passwords, email, nickname, gender, usertype)
-        value (#{username},#{passwords},#{email},#{nickname},#{gender},#{usertype})
+            value (#{username}, #{passwords}, #{email}, #{nickname}, #{gender}, #{usertype})
     </insert>
 
     <select id="selectByUsername" resultType="com.example.demo1.entity.User">
-        select * from `user` where username=#{username}
+        select *
+        from `user`
+        where username = #{username}
     </select>
 
+    <update id="updateById">
+        update `user`
+        set passwords=#{passwords},
+            email=#{email},
+            nickname=#{nickname},
+            gender=#{gender}
+        where id = #{id}
+    </update>
+
+    <select id="selectByType" resultType="com.example.demo1.entity.User">
+        select *
+        from `user`
+        where usertype = #{type}
+    </select>
+
+    <delete id="deleteByUsername">
+        delete from user where username=#{username}
+    </delete>
 </mapper>

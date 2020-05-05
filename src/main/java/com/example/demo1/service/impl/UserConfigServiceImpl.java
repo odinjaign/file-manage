@@ -5,6 +5,7 @@ import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.entity.User;
 import com.example.demo1.entity.UserConfig;
 import com.example.demo1.enums.FolderPasswordType;
+import com.example.demo1.enums.Usertype;
 import com.example.demo1.service.UserConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class UserConfigServiceImpl implements UserConfigService {
         if (config == null) {
             return null;
         } else {
-            switch (config.getPasswordtype()){
+            switch (config.getPasswordtype()) {
                 case 0:
                     return FolderPasswordType.关闭;
                 case 1:
@@ -50,12 +51,15 @@ public class UserConfigServiceImpl implements UserConfigService {
     public NormalSend isLogin() {
         NormalSend normalSend = new NormalSend();
         User nowUser = loginServiceImpl.getNowUser();
-        if (nowUser == null){
+        if (nowUser == null) {
             normalSend.setCode(-1);
             normalSend.setMsg("用户未登录");
-        }else {
+        } else if (nowUser.getUsertype() == Usertype.管理用户.value()) {
+            normalSend.setCode(1);
+            normalSend.setMsg("管理用户[" + nowUser.getUsername() + "]已登录");
+        } else {
             normalSend.setCode(0);
-            normalSend.setMsg("用户["+nowUser.getUsername()+"]已登录");
+            normalSend.setMsg("用户[" + nowUser.getUsername() + "]已登录");
         }
         return normalSend;
     }

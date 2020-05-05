@@ -3,11 +3,21 @@
 <mapper namespace="com.example.demo1.dao.SysConfigMapper">
 
     <select id="selectSysConfigAll" resultType="com.example.demo1.entity.SysConfig">
-        select * from sys_config
+        select *
+        from sys_config
     </select>
 
     <select id="selectSysConfigByKey" resultType="com.example.demo1.entity.SysConfig">
-        select * from sys_config where configkey=#{key}
+        select *
+        from sys_config
+        where configkey = #{key}
     </select>
+
+    <update id="updateConfig">
+        update sys_config
+        set configvalue = #{configvalue}
+        where id = #{id}
+          and configkey = #{configkey}
+    </update>
 
 </mapper>

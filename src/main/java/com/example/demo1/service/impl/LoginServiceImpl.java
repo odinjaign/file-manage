@@ -7,6 +7,7 @@ import com.example.demo1.dto.send.CaptchaDTOSend;
 import com.example.demo1.dto.send.LoginDTOSend;
 import com.example.demo1.entity.User;
 import com.example.demo1.entity.UserConfig;
+import com.example.demo1.enums.Usertype;
 import com.example.demo1.service.LoginService;
 import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.CaptchaUtil;
@@ -14,7 +15,6 @@ import com.example.demo1.util.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
@@ -71,6 +71,15 @@ public class LoginServiceImpl implements LoginService {
         if (!passwords.equals(PasswordUtils.passwords(password))) {
             send.setCode(-3);
             send.setMsg("密码错误");
+            return send;
+        }
+
+        //是管理用户
+        if (Usertype.管理用户.value() == user.getUsertype()){
+            send.setCode(1);
+            send.setMsg("登录为管理用户");
+            send.setUsername(username);
+            cacheUtil.saveCacheO("user", user);
             return send;
         }
 
