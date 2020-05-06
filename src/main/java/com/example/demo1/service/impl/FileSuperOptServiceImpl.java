@@ -18,7 +18,8 @@ import java.io.*;
  * 文件高级操作：
  * 上传文件、
  * 下载文件、
- * 新建文件
+ * 新建文件、
+ * 压缩解压
  */
 @Service
 public class FileSuperOptServiceImpl implements FileSuperOptService {

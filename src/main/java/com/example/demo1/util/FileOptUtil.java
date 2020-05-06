@@ -19,6 +19,12 @@ public class FileOptUtil {
     }
 
     public static boolean fileInFolder(File file, File folder) {
+
+        if (folder.getParent() == null){
+            //顶层目录
+            return file.getPath().startsWith(folder.getPath());
+        }
+
         String folderpath = folder.getPath() + "\\";
         if (file.equals(folder)) {
             return true;

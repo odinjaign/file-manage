@@ -16,9 +16,19 @@ logging:
         demo1:
           dao: debug
 
+
+
 jaign:
   config:
     free-space-root: C:/Users/jaign/test/
+    html-tmp: C:/Users/jaign/test/html/tmp.html
+    txt-code-type:
+      - txt
+      - yml
+      - c
+      - cpp
+      - h
+      - java
     document-type:
       pdf:
         - pdf

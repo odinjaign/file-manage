@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>文件隐藏管理</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+
+
+	<body>
+		<div class="layui-container" style="margin-top: 20px;">
+			<fieldset class="layui-elem-field layui-field-title">
+				<legend>文件夹密码管理</legend>
+				<div class="layui-field-box" id="hide-box">
+					<a href="userconfig.html" class="layui-btn layui-btn-sm">返回配置页</a>
+					<button id="add-path-btn" type="button" class="layui-btn layui-btn-normal">添加记录</button>
+					<button id="add-reg-btn" type="button" class="layui-btn layui-btn-normal">添加正则记录</button>
+					<br><br />
+					<blockquote class="layui-elem-quote">
+						<div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
+							<div class="layui-col-md6">
+								路径/正则
+							</div>
+							<div class="layui-col-md2">
+								文件/文件夹
+							</div>
+							<div class="layui-col-md2">
+								类型
+							</div>
+							<div class="layui-col-md2">
+								操作
+							</div>
+						</div>
+					</blockquote>
+					<!-- <blockquote class="layui-elem-quote layui-quote-nm">
+						<div class="layui-row layui-col-space5" style="text-align: center;">
+							<div class="layui-col-md6" style="text-align: left;">
+								C:\Users\jaign\test\jaign\boot-backend
+							</div>
+							<div class="layui-col-md2">
+								<span class="layui-badge layui-bg-warm">文件</span>
+							</div>
+							<div class="layui-col-md2">
+								<span class="status layui-badge layui-bg-green">路径</span>
+							</div>
+							<div class="layui-col-md2">
+								<button type="button" class="remove-btn layui-btn layui-btn-danger layui-btn-xs">移除记录</button>
+							</div>
+						</div>
+					</blockquote> -->
+				</div>
+			</fieldset>
+
+		</div>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			layui.use(['layer'], function() {
+				var layer = layui.layer;
+				//layer.msg("hello");
+				var $ = layui.$;
+
+				//用户未登录的跳转
+				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+					if (rel.code === -1) {
+						layer.msg(rel.msg, function() {
+							window.location = "login.html";
+						})
+					} else if (rel.code === 1) {
+						layer.msg(rel.msg, function() {
+							window.location = "sysconfig.html";
+						})
+					}
+				})
+
+				function pathHideTmpHtml(node) {
+					return '\
+					<blockquote class="layui-elem-quote layui-quote-nm">\
+						<div class="layui-row layui-col-space5" style="text-align: center;">\
+							<div class="layui-col-md6" style="text-align: left;">\
+								' +
+						node.path +
+						'\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="layui-badge layui-bg-warm">' + node.type +
+						'</span>\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="status layui-badge layui-bg-green">路径</span>\
+							</div>\
+							<div class="layui-col-md2">\
+								<button type="button" class="remove-btn layui-btn layui-btn-danger layui-btn-xs" data-node-id="' +
+						node.id + '">移除记录</button>\
+							</div>\
+						</div>\
+					</blockquote>\
+					';
+				}
+
+				function regHideTmpHtml(node) {
+					return '\
+					<blockquote class="layui-elem-quote layui-quote-nm">\
+						<div class="layui-row layui-col-space5" style="text-align: center;">\
+							<div class="layui-col-md6" style="text-align: left;">\
+								' +
+						node.reg +
+						'\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="layui-badge layui-bg-warm">' + node.type +
+						'</span>\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="status layui-badge layui-bg-blue">正则</span>\
+							</div>\
+							<div class="layui-col-md2">\
+								<button type="button" class="remove-btn layui-btn layui-btn-danger layui-btn-xs" data-node-id="' +
+						node.id + '">移除记录</button>\
+							</div>\
+						</div>\
+					</blockquote>\
+					';
+				}
+
+				$.post('http://localhost:8080/hide/manage/list', function(rel) {
+					console.log(rel);
+					if (rel.code === 0) {
+						//渲染
+						rel.pathdata.forEach(function(val, inx) {
+							$("#hide-box").append(pathHideTmpHtml(val))
+						});
+						rel.regdata.forEach(function(val, inx) {
+							$("#hide-box").append(regHideTmpHtml(val))
+						});
+						$(".remove-btn").click(function() {
+							var _id = $(this).attr("data-node-id");
+							$.post('http://localhost:8080/hide/manage/del', {
+								id: _id
+							}, function(rel) {
+								console.log(rel);
+								if (rel.code === 0) {
+									//删除成功
+									location.reload();
+								}
+							})
+						})
+					} else {
+						layer.msg(rel.msg);
+					}
+				});
+
+				$("#add-path-btn").click(function() {
+					layer.open({
+						title: '添加',
+						content: '<input type="text" name="path" autocomplete="off" placeholder="文件夹路径" class="layui-input">',
+						yes: function(index, layero) {
+							var _path = $(layero.find('.layui-input')).val();
+							console.log(_path);
+							$.post('http://localhost:8080/hide/manage/add', {
+								content: _path,
+								type: 1
+							}, function(rel) {
+								layer.msg(rel.msg);
+								if (rel.code === 0) {
+									location.reload();
+								}
+							})
+							layer.close(index);
+						}
+					})
+				});
+				$("#add-reg-btn").click(function() {
+					layer.open({
+						title: '添加正则',
+						content: '<input type="text" name="path" autocomplete="off" placeholder="文件夹路径" class="layui-input">',
+						yes: function(index, layero) {
+							var _reg = $(layero.find('.layui-input')).val();
+							console.log(_reg);
+							$.post('http://localhost:8080/hide/manage/add', {
+								content: _reg,
+								type: 2
+							}, function(rel) {
+								layer.msg(rel.msg);
+								if (rel.code === 0) {
+									location.reload();
+								}
+							})
+							layer.close(index);
+						}
+					})
+				});
+			})
+		</script>
+	</body>
+</html>

@@ -22,7 +22,7 @@ public class ClassManageController {
 
     @PostMapping("items")
     public List<ClassList> items(){
-        return classListMapper.selectAll();
+        return classManageServiceImpl.getUserItems();
     }
 
     @PostMapping("add")

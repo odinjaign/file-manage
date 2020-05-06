@@ -157,6 +157,13 @@ public class ClassManageServiceImpl implements ClassManageService {
         return allFiles;
     }
 
+    @Override
+    public List<ClassList> getUserItems() {
+        User nowUser = loginServiceImpl.getNowUser();
+        int userid = nowUser.getId();
+        return classListMapper.selectAll(userid);
+    }
+
     private ClassType typeOf(String type) {
         if ("音乐".equals(type)) {
             return ClassType.音乐;

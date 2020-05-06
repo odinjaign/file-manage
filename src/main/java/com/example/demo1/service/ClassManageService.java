@@ -16,4 +16,6 @@ public interface ClassManageService {
     NormalSend delete(String path, int type);
 
     List<File> getFile(ClassList list);
+
+    List<ClassList> getUserItems();
 }

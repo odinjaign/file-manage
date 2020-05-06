@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+	<body style=" background-color: #F2F2F2;">
+		<ul class="layui-nav layui-bg-blue">
+			<li class="layui-nav-item">
+				<a href="musics.html">音乐</a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="movies.html">视频</a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="documents.html">文档</a>
+			</li>
+			<li class="layui-nav-item  layui-this">
+				<a href="#">图片<span id="image-count" class="layui-badge">0</span></a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="index.html">返回主页</a>
+			</li>
+		</ul>
+		<div class="layui-container" style="padding: 20px;">
+			<div id="image-list-box" class="layui-row layui-col-space15">
+
+			</div>
+		</div>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			layui.use(['element', 'layer'], function() {
+				var element = layui.element;
+				var $ = layui.$;
+
+				//用户未登录的跳转
+				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+					if (rel.code === -1) {
+						layer.msg(rel.msg, function() {
+							window.location = "login.html";
+						})
+					} else if (rel.code === 1) {
+						layer.msg(rel.msg, function() {
+							window.location = "sysconfig.html";
+						})
+					}
+				})
+				$.post("http://127.0.0.1:8080/sys/config/get", {
+					key: "typeview"
+				}, function(status) {
+					if (!status) {
+						layer.msg("分类浏览未启用", function() {
+							window.location = "index.html";
+						})
+					}
+				})
+
+
+				function imageNodeHtml(node) {
+					var encodePath = encodeURIComponent(node.path);
+					return '\
+					<div class="layui-col-md4">\
+					  <div class="layui-card">\
+					    <div class="layui-card-header">\
+							<span class="layui-badge layui-bg-blue">' +
+						node.ext + '</span>\
+							<span class="layui-badge layui-bg-orange">' + node.w + 'x' + node.h +
+						'</span>\
+							' + node.name + '\
+						</div>\
+					    <div class="layui-card-body" data-path="' + node.path +
+						'">\
+					      <button type="button" class="view-btn layui-btn layui-btn-primary layui-btn-xs">预览</button>\
+						  <button type="button" class="delete-btn layui-btn layui-btn-danger layui-btn-xs">删除</button>\
+					    </div>\
+					  </div>\
+					</div>\
+					';
+				};
+
+				$.ajax({
+					url: 'http://localhost:8080/image/list',
+					type: 'POST',
+					success: function(rel) {
+						console.log(rel.msg);
+						if (rel.code === 0) {
+							rel.data.forEach(function(val, inx) {
+								$("#image-list-box").append(imageNodeHtml(val))
+							});
+							//渲染预览
+							$("#image-count").html(rel.count);
+							$(".view-btn").click(function() {
+								// layer.msg();
+								var path = $(this).parent().attr("data-path");
+								// var realpath = path.replace(/\\/g, "/");
+								var realpath = encodeURIComponent(path);
+								var image = '<img src="http://localhost:8080/image/img?path=' + realpath + '">';
+								layer.open({
+									type: 1,
+									title: false,
+									shade: 0.8,
+									closeBtn: 0,
+									shadeClose: true,
+									area: ["80%", "80%"],
+									content: image
+								});
+
+							});
+							//删除视频文件
+							$(".delete-btn").click(function() {
+
+								var path = $(this).parent().attr("data-path");
+								$.ajax({
+									url: 'http://localhost:8080/opt/delete',
+									method: 'POST',
+									data: {
+										filepath: path
+									},
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+							})
+						}
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -102,11 +102,15 @@ public class MainListServiceImpl implements MainListService {
         if (rootFolder.equals(pwd)) {
             //当前目录为根目录
             send.setCode(-1);
-            send.setMsg("当前目录为用户跟目录");
+            send.setMsg("当前目录为用户根目录");
             return send;
-        } else {
-            NormalSend enterfolder = enterfolder(pwd.getParent(),false);
-            return enterfolder;
+        } else if(pwd.getParent() == null){
+            //当前目录为根目录
+            send.setCode(-2);
+            send.setMsg("当前目录为根目录");
+            return send;
+        }else {
+            return enterfolder(pwd.getParent(),false);
         }
     }
 

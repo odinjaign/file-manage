@@ -1,7 +1,8 @@
 package com.example.demo1.util;
 
+import cn.hutool.core.util.URLUtil;
+
 import java.util.Arrays;
-import java.util.List;
 
 public class StringOptUtil {
     public static String fileExt(String filename) {
@@ -22,5 +23,10 @@ public class StringOptUtil {
             stringBuffer.append("0");
         }
         return stringBuffer.toString() + String.valueOf(num);
+    }
+
+    public static String imgToURL(String path){
+        String imgEncodePath = URLUtil.encode(path);
+        return "http://localhost:8080/image/img?path="+imgEncodePath;
     }
 }

@@ -5,6 +5,7 @@
     <select id="selectAll" resultType="com.example.demo1.entity.ClassList">
         select *
         from class_list
+        where userid = #{userid}
     </select>
     <select id="selectByTypeAndUser" resultType="com.example.demo1.entity.ClassList">
         select *

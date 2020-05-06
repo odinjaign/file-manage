@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+	<body>
+		<ul class="layui-nav layui-bg-blue">
+			<li class="layui-nav-item layui-this">
+				<a href="#">音乐<span id="music-count" class="layui-badge">0</span></a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="movies.html">视频</a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="documents.html">文档</a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="images.html">图片</a>
+			</li>
+			<li class="layui-nav-item">
+				<a href="index.html">返回主页</a>
+			</li>
+		</ul>
+		<div id="music-list-box" class="layui-container" style="margin-top: 20px">
+			<blockquote class="layui-elem-quote">
+				<div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
+					<div class="layui-col-md3">
+						名称
+					</div>
+					<div class="layui-col-md2">
+						标题
+					</div>
+					<div class="layui-col-md2">
+						艺术家
+					</div>
+					<div class="layui-col-md1">
+						类型&nbsp;时长
+					</div>
+					<div class="layui-col-md2">
+						唱片集
+					</div>
+					<div class="layui-col-md2">
+						操作
+					</div>
+				</div>
+			</blockquote>
+
+		</div>
+		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			layui.use(['form', 'element', 'layer'], function() {
+				var form = layui.form;
+				var element = layui.element;
+				var layer = layui.layer;
+				var $ = layui.$;
+
+				//用户未登录的跳转
+				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+					if (rel.code === -1) {
+						layer.msg(rel.msg, function() {
+							window.location = "login.html";
+						})
+					} else if (rel.code === 1) {
+						layer.msg(rel.msg, function() {
+							window.location = "sysconfig.html";
+						})
+					}
+				})
+
+				$.post("http://127.0.0.1:8080/sys/config/get", {
+					key: "typeview"
+				}, function(status) {
+					if (!status) {
+						layer.msg("分类浏览未启用", function() {
+							window.location = "index.html";
+						})
+					}
+				})
+
+				function fmtSecond(time) {
+					var m = Math.floor(time / 60);
+					var s = time - 60 * m;
+					if (s < 10) {
+						return m + ":0" + s;
+					} else {
+						return m + ":" + s;
+					}
+
+				}
+
+
+				function musicNodeHtml(nodedata) {
+					return '\
+					<blockquote class="layui-elem-quote layui-quote-nm">\
+					  <div class="layui-row layui-col-space5" style="text-align: center;">\
+					  	<div class="layui-col-md3" style="text-align: left;">\
+					  		' +
+						nodedata.name + '\
+					  	</div>\
+					  	<div class="layui-col-md2">\
+					  		' + nodedata.title +
+						'\
+					  	</div>\
+					  	<div class="layui-col-md2">\
+					  		' + nodedata.singer +
+						'\
+					  	</div>\
+					  	<div class="layui-col-md1">\
+					  		<span class="layui-badge layui-bg-orange">' +
+						nodedata.ext.toLocaleUpperCase() + '</span>\
+					  	<span class="layui-badge layui-bg-green">' + fmtSecond(
+							nodedata.length) + '</span>\
+						</div>\
+					  	<div class="layui-col-md2">\
+					  		' +
+						nodedata.sheet +
+						'\
+					  	</div>\
+						<div class="layui-col-md2" data-path="' + nodedata.path +
+						'">\
+							 <button type="button" class="play-btn layui-btn layui-btn-primary layui-btn-xs">播放</button>\
+							 <button type="button" class="delete-btn layui-btn layui-btn-danger layui-btn-xs">删除</button>\
+						</div>\
+					  </div>\
+					</blockquote>\
+					';
+				}
+
+				$.ajax({
+					url: 'http://localhost:8080/music/list',
+					type: 'POST',
+					success: function(rel) {
+						console.log(rel.msg);
+						if (rel.code === 0) {
+							console.log(rel.data);
+							rel.data.forEach(function(val, inx) {
+								$("#music-list-box").append(musicNodeHtml(val))
+
+							})
+							$("#music-count").html(rel.count);
+							//音乐播放
+							$(".play-btn").click(function() {
+								// layer.msg();
+								var path = $(this).parent().attr("data-path");
+								// var realpath = path.replace(/\\/g, "/");
+								var realpath = encodeURIComponent(path);
+								layer.open({
+									type: 1,
+									title: false,
+									shade: 0.8,
+									closeBtn: 0,
+									shadeClose: true,
+									content: '<audio src="http://localhost:8080/music/file?path=' + realpath +
+										'" controls="controls" loop="loop" autoplay="autoplay"></audio>'
+								});
+							})
+							//删除音乐文件
+							$(".delete-btn").click(function() {
+								layer.msg("删除文件");
+								var path = $(this).parent().attr("data-path");
+								$.ajax({
+									url: 'http://localhost:8080/opt/delete',
+									method: 'POST',
+									data: {
+										filepath: path
+									},
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+							})
+						}
+					}
+				})
+
+			});
+		</script>
+	</body>
+</html>
