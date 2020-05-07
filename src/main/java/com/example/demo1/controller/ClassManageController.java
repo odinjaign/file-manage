@@ -25,6 +25,11 @@ public class ClassManageController {
         return classManageServiceImpl.getUserItems();
     }
 
+    @PostMapping("del/cache")
+    NormalSend delCache(){
+        return classManageServiceImpl.delCache();
+    }
+
     @PostMapping("add")
     public NormalSend add(String path,String type,int num,String exts){
         return classManageServiceImpl.add(path,type,num,exts);

@@ -5,7 +5,7 @@
 		<title></title>
 		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
 	</head>
-	<body style=" background-color: #F2F2F2;">
+	<body>
 		<ul class="layui-nav layui-bg-blue">
 			<li class="layui-nav-item">
 				<a href="musics.html">音乐</a>
@@ -22,12 +22,39 @@
 			<li class="layui-nav-item">
 				<a href="index.html">返回主页</a>
 			</li>
+<!--			<li class="layui-nav-item">-->
+<!--				<a id="update-cache" href="#">更新缓存</a>-->
+<!--			</li>-->
 		</ul>
-		<div class="layui-container" style="padding: 20px;">
-			<div id="image-list-box" class="layui-row layui-col-space15">
+<!--		<div class="layui-container" style="padding: 20px;">-->
+<!--			<div id="image-list-box" class="layui-row layui-col-space15">-->
 
-			</div>
+<!--			</div>-->
+<!--		</div>-->
+
+		<div id="image-list-box" class="layui-container" style="margin-top: 20px">
+			<blockquote class="layui-elem-quote">
+				<div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
+					<div class="layui-col-md5">
+						名称 <span id="update-cache" class="layui-badge layui-bg-green"><i class="layui-icon">&#xe669;</i></span>
+					</div>
+					<div class="layui-col-md2">
+						类型
+					</div>
+					<div class="layui-col-md2">
+						宽高
+					</div>
+					<div class="layui-col-md1">
+						大小
+					</div>
+					<div class="layui-col-md2">
+						操作
+					</div>
+				</div>
+			</blockquote>
+
 		</div>
+
 		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			layui.use(['element', 'layer'], function() {
@@ -59,23 +86,32 @@
 
 				function imageNodeHtml(node) {
 					var encodePath = encodeURIComponent(node.path);
+
 					return '\
-					<div class="layui-col-md4">\
-					  <div class="layui-card">\
-					    <div class="layui-card-header">\
-							<span class="layui-badge layui-bg-blue">' +
-						node.ext + '</span>\
-							<span class="layui-badge layui-bg-orange">' + node.w + 'x' + node.h +
-						'</span>\
-							' + node.name + '\
+					<blockquote class="layui-elem-quote layui-quote-nm">\
+						<div class="layui-row layui-col-space5" style="text-align: center;">\
+							<div class="layui-col-md5" style="text-align: left;">\
+								'+node.name+'\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="layui-badge layui-bg-blue">' +
+							node.ext.toUpperCase() + '</span>\
+							</div>\
+							<div class="layui-col-md2">\
+								<span class="layui-badge layui-bg-orange">' + node.w + 'x' + node.h +
+							'</span>\
+                                </div>\
+                                <div class="layui-col-md1">\
+                                    <span class="layui-badge layui-bg-blue">' +
+								parseFloat(node.size).toLocaleString() +
+								'KB</span>\
+							</div>\
+							<div class="layui-col-md2" data-path="' + node.path +'" data-w="' + node.w +'" data-h="' + node.h +'">\
+								<button type="button" class="view-btn layui-btn layui-btn-primary layui-btn-xs">预览</button>\
+								<button type="button" class="delete-btn layui-btn layui-btn-danger layui-btn-xs">删除</button>\
+							</div>\
 						</div>\
-					    <div class="layui-card-body" data-path="' + node.path +
-						'">\
-					      <button type="button" class="view-btn layui-btn layui-btn-primary layui-btn-xs">预览</button>\
-						  <button type="button" class="delete-btn layui-btn layui-btn-danger layui-btn-xs">删除</button>\
-					    </div>\
-					  </div>\
-					</div>\
+					</blockquote>\
 					';
 				};
 
@@ -91,23 +127,24 @@
 							//渲染预览
 							$("#image-count").html(rel.count);
 							$(".view-btn").click(function() {
-								// layer.msg();
+
 								var path = $(this).parent().attr("data-path");
-								// var realpath = path.replace(/\\/g, "/");
-								var realpath = encodeURIComponent(path);
-								var image = '<img src="http://localhost:8080/image/img?path=' + realpath + '">';
+								var w = $(this).parent().attr("data-w");
+								var h = $(this).parent().attr("data-h");
+								var _url = 'http://localhost:8080/image/img?path=' + encodeURIComponent(path);
+								w = h > 600 ? w / h * 600 : w
+								h = h > 600 ? 600 : h
 								layer.open({
 									type: 1,
 									title: false,
-									shade: 0.8,
-									closeBtn: 0,
+									offset: 'auto',
+									area: [w + 'px', h + 'px'],
 									shadeClose: true,
-									area: ["80%", "80%"],
-									content: image
+									content: '<div><img alt="'+path+'" style="max-width: 100%;max-height: 100%" src="' + _url + '"></div>'
 								});
 
 							});
-							//删除视频文件
+							//删除文件
 							$(".delete-btn").click(function() {
 
 								var path = $(this).parent().attr("data-path");
@@ -128,6 +165,17 @@
 						}
 					}
 				});
+
+				$('#update-cache').click(function () {
+					$.post('http://localhost:8080/class/manage/del/cache',function (rel) {
+						if (rel.code === 0) {
+							location.reload()
+						}else {
+							layer.apply(rel.msg)
+						}
+					})
+				})
+
 			});
 		</script>
 	</body>

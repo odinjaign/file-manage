@@ -32,6 +32,8 @@ public class LoginServiceImpl implements LoginService {
     private UserConfigMapper userConfigMapper;
     @Autowired
     private CacheUtil cacheUtil;
+    @Autowired
+    private ClassManageServiceImpl classManageServiceImpl;
 
 
     @Override
@@ -143,6 +145,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public boolean logout() {
+        classManageServiceImpl.delCache();
+        cacheUtil.delete("main_list");
+        cacheUtil.delete("pwd");
         return cacheUtil.delete("user");
     }
 

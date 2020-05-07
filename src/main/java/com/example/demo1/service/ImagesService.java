@@ -6,4 +6,5 @@ public interface ImagesService {
     ImageDTOSend getAllImages();
 
     byte[] img(String path);
+
 }

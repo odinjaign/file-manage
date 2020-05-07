@@ -2,9 +2,11 @@ package com.example.demo1.service.impl;
 
 import com.example.demo1.dao.ClassListMapper;
 import com.example.demo1.dto.send.ImageDTOSend;
+import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.entity.ClassList;
 import com.example.demo1.enums.ClassType;
 import com.example.demo1.service.ImagesService;
+import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,22 @@ public class ImagesServiceImpl implements ImagesService {
     private ClassManageServiceImpl classManageServiceImpl;
     @Autowired
     private ClassListMapper classListMapper;
+    @Autowired
+    private CacheUtil cacheUtil;
+
 
     @Override
     public ImageDTOSend getAllImages() {
         ImageDTOSend send = new ImageDTOSend();
+
+        if (cacheUtil.hasKey("img_list")) {
+            List<ImageDTOSend.ImageNode> img_list = cacheUtil.getList("img_list", ImageDTOSend.ImageNode.class);
+            send.setCode(0);
+            send.setMsg("图片列表获取成功[Cache]");
+            send.setCount(img_list.size());
+            send.setData(img_list);
+            return send;
+        }
 
         //得到当前用户id
         int userid = loginServiceImpl.getNowUser().getId();
@@ -42,10 +56,10 @@ public class ImagesServiceImpl implements ImagesService {
             }
         }
         send.setCode(0);
-        send.setMsg("视频列表获取成功");
+        send.setMsg("图片列表获取成功");
         send.setCount(nodes.size());
         send.setData(nodes);
-
+        cacheUtil.setList("img_list",nodes);
         return send;
     }
 
@@ -62,6 +76,8 @@ public class ImagesServiceImpl implements ImagesService {
         }
         return null;
     }
+
+
 
 
 }

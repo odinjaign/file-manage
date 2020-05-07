@@ -6,6 +6,7 @@ import com.example.demo1.entity.ClassList;
 import com.example.demo1.entity.User;
 import com.example.demo1.enums.ClassType;
 import com.example.demo1.service.ClassManageService;
+import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.FileOptUtil;
 import com.example.demo1.util.StringOptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class ClassManageServiceImpl implements ClassManageService {
     private MainListServiceImpl mainListServiceImpl;
     @Autowired
     private ClassListMapper classListMapper;
+    @Autowired
+    private CacheUtil cacheUtil;
 
 
     @Override
@@ -150,7 +153,7 @@ public class ClassManageServiceImpl implements ClassManageService {
         while (iterator.hasNext()) {
             File file = iterator.next();
             String ext = StringOptUtil.fileExt(file.getName());
-            if (!StringOptUtil.extInExts(ext, exts)){
+            if (!StringOptUtil.extInExts(ext, exts)) {
                 iterator.remove();
             }
         }
@@ -162,6 +165,17 @@ public class ClassManageServiceImpl implements ClassManageService {
         User nowUser = loginServiceImpl.getNowUser();
         int userid = nowUser.getId();
         return classListMapper.selectAll(userid);
+    }
+
+    @Override
+    public NormalSend delCache() {
+        NormalSend send = new NormalSend();
+
+        cacheUtil.delete("img_list");
+
+        send.setCode(0);
+        send.setMsg("清除缓存完成");
+        return send;
     }
 
     private ClassType typeOf(String type) {

@@ -18,4 +18,6 @@ public interface ClassManageService {
     List<File> getFile(ClassList list);
 
     List<ClassList> getUserItems();
+
+    NormalSend delCache();
 }
