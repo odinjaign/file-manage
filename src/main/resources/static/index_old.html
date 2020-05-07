@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>旧主页21312321</title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+	</head>
+	<body>
+
+		<div class="layui-container" style="margin-top: 20px;">
+			<fieldset class="layui-elem-field layui-field-title">
+				<legend id="title">
+					当前路径
+				</legend>
+				<div class="layui-field-box">
+					<table id="file-table" lay-filter="file-list"></table>
+				</div>
+			</fieldset>
+			<script type="text/html" id="headToolbar">
+				<div class="layui-btn-container">
+				<a href="userconfig.html" class="layui-btn layui-btn-sm">用户配置页</a>
+				<a href="musics.html" id="typeview-btn" class="layui-btn layui-btn-sm layui-bg-blue">分类浏览</a>
+			    <button class="layui-btn layui-btn-sm" lay-event="returnlast">返回上一级</button>
+				<button class="layui-btn layui-btn-sm" lay-event="updatecache">刷新缓存</button>
+				<button id="favorite-btn" class="layui-btn layui-btn-sm" lay-event="lookfavorite">查看收藏</button>
+				<button id="upload-btn" class="layui-btn layui-btn-sm" lay-event="uploadfile">上传文件</button>
+				<button class="layui-btn layui-btn-sm" lay-event="createfile">创建文件</button>
+			  </div>
+			</script>
+			<script type="text/html" id="toolbar">
+				{{#  if(d.folder){ }}
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="enter">进入</a>
+				{{# }else{ }}
+				<a class="layui-btn layui-btn-xs" lay-event="downloadfile">下载文件</button>
+				{{# } }}
+				<a class="layui-btn layui-btn-xs" lay-event="info">属性</a>
+				<a class="layui-btn layui-btn-xs" lay-event="copyto">复制到</a>
+				<a class="layui-btn layui-btn-xs" lay-event="moveto">移动到</a>
+				<a class="layui-btn layui-btn-xs" lay-event="rename">重命名</a>
+				<a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+			</script>
+		</div>
+
+		<script src="layui/layui.js"></script>
+		<script>
+			layui.use(['table', 'upload'], function() {
+				var table = layui.table;
+				var $ = layui.jquery;
+				var upload = layui.upload;
+				
+				//用户未登录的跳转
+				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+					if (rel.code === -1) {
+						layer.msg(rel.msg, function() {
+							window.location = "login.html";
+						})
+					} else if(rel.code === 1){
+						layer.msg(rel.msg, function() {
+							window.location = "sysconfig.html";
+						})
+					}
+				})
+				
+				$.post("http://127.0.0.1:8080/sys/config/get",{key:"typeview"},function(status){
+					if(!status){
+						$("#typeview-btn").remove();
+					}
+				})
+				
+				$.post("http://127.0.0.1:8080/sys/config/get",{key:"favorite"},function(status){
+					if(!status){
+						$("#favorite-btn").remove();
+					}
+				})
+				$.post("http://127.0.0.1:8080/sys/config/get",{key:"upload"},function(status){
+					if(!status){
+						$("#upload-btn").remove();
+					}
+				})
+				
+				//第一个实例
+				var file_table = table.render({
+					elem: '#file-table',
+					height: 'full-120',
+					url: 'http://localhost:8080/main/list',
+					toolbar: '#headToolbar',
+					page: true //开启分页
+						,
+					method: 'post',
+					cols: [
+						[ //表头
+							{
+								type: 'checkbox',
+								fixed: 'left'
+							}, {
+								field: 'name',
+								title: '名称',
+								width: '200'
+							}, {
+								field: 'updatetime',
+								title: '修改日期',
+								width: '200'
+							}, {
+								field: 'type',
+								title: '类型',
+								width: '100'
+							}, {
+								field: 'size',
+								title: '大小(KB)',
+								width: '100'
+							}, {
+								fixed: 'right',
+								title: '操作',
+								templet: '#toolbar',
+								width: '400'
+							}, {
+								title: '收藏',
+								templet: function(d) {
+									return '<a class="layui-btn layui-btn-xs" lay-event="addfavorite">添加收藏</a>';
+								},
+								width: 100
+							}
+						]
+					]
+				});
+
+				//渲染标题
+				$.ajax({
+					url: 'http://localhost:8080/main/pwd',
+					method: 'POST',
+					success: function(data) {
+						console.log(data);
+						$('#title').text(data);
+					}
+				});
+				table.on('tool(file-list)', function(obj) {
+					console.log(obj);
+					var data = obj.data;
+					if (obj.event === 'info') {
+						layer.msg(data.path);
+					} else if (obj.event === 'enter') {
+						$.ajax({
+							url: 'http://localhost:8080/main/enterfolder',
+							method: 'POST',
+							data: {
+								folder: data.path
+							},
+							success: function(rel) {
+								//刷新页面
+								if (rel.code === 0) {
+									location.reload();
+								} else if (rel.code === -1) {
+									layer.msg(rel.msg);
+									//文件夹被加密
+									layer.open({
+										title: '输入密码',
+										content: '<input type="text" name="password" lay-verify="title" autocomplete="off" placeholder="文件夹密码" class="layui-input">',
+										yes: function(index, layero) {
+											//do something
+											var password = $(layero.find('.layui-input')).val();
+											var reqdata = {
+												password: password,
+												folder: data.path
+											};
+											$.ajax({
+												url: 'http://localhost:8080/main/enterfolder',
+												method: 'POST',
+												data: reqdata,
+												success: function(rel) {
+													if (rel.code === 0) {
+														location.reload();
+													}else{
+														layer.msg(rel.msg)
+													}
+												}
+											});
+										}
+									})
+								}
+							}
+						});
+					} else if (obj.event === 'copyto') {
+						var path = obj.data.path;
+						layer.open({
+							title: '复制到',
+							content: '<input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="目标路径" class="layui-input">',
+							yes: function(index, layero) {
+								//do something
+								var folder = $(layero.find('.layui-input')).val();
+								var reqdata = {
+									filepath: path,
+									folder: folder
+								};
+								$.ajax({
+									url: 'http://localhost:8080/opt/copyto',
+									method: 'POST',
+									data: reqdata,
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+								//发送复制事件
+								layer.close(index); //如果设定了yes回调，需进行手工关闭
+							}
+						})
+					} else if (obj.event === 'moveto') {
+						var path = obj.data.path;
+						layer.open({
+							title: '移动到',
+							content: '<input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="目标路径" class="layui-input">',
+							yes: function(index, layero) {
+								//do something
+								var folder = $(layero.find('.layui-input')).val();
+								var reqdata = {
+									filepath: path,
+									folder: folder
+								};
+								$.ajax({
+									url: 'http://localhost:8080/opt/moveto',
+									method: 'POST',
+									data: reqdata,
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+								//发送复制事件
+								layer.close(index); //如果设定了yes回调，需进行手工关闭
+							}
+						})
+					} else if (obj.event === 'rename') {
+						var oldname = obj.data.name;
+						var path = obj.data.path;
+						layer.open({
+							title: '重命名',
+							content: '<input type="text" name="title" lay-verify="title" value="' + oldname +
+								'" autocomplete="off" placeholder="请输入新的名字" class="layui-input">',
+							yes: function(index, layero) {
+								//do something
+								var newname = $(layero.find('.layui-input')).val();
+								//发送重命名事件
+								var reqdata = {
+									filepath: path,
+									newname: newname
+								};
+								$.ajax({
+									url: 'http://localhost:8080/opt/rename',
+									method: 'POST',
+									data: reqdata,
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+								layer.close(index); //如果设定了yes回调，需进行手工关闭
+							}
+						})
+					} else if (obj.event === 'delete') {
+						var reqdata = {
+							filepath: obj.data.path
+						};
+						$.ajax({
+							url: 'http://localhost:8080/opt/delete',
+							method: 'POST',
+							data: reqdata,
+							success: function(rel) {
+								layer.msg(rel.msg);
+								if (rel.code === 0) {
+									location.reload();
+								}
+							}
+						})
+					} else if (obj.event === 'downloadfile') {
+						// var reqdata = {
+						// 	filepath:obj.data.path
+						// };
+						//文件下载
+						var url = 'http://localhost:8080/opt/super/download?filepath=' + obj.data.path;
+						const link = document.createElement('a');
+						link.href = url.replace(/\\/g, "/");
+						link.click();
+
+					} else if (obj.event === 'addfavorite') {
+						$.ajax({
+							url: 'http://localhost:8080/favorite/add',
+							method: 'POST',
+							data: {
+								path: obj.data.path
+							},
+							success: function(rel) {
+								layer.msg(rel.msg);
+							}
+						})
+					}
+				});
+				table.on('toolbar(file-list)', function(obj) {
+					if (obj.event === 'returnlast') {
+						$.ajax({
+							url: 'http://localhost:8080/main/returnlast',
+							method: 'POST',
+							success: function(suc) {
+								//刷新页面
+								if (suc) {
+									// layer.msg('返回上一级成功', function () {
+									location.reload();
+									// })
+								} else {
+									layer.msg('返回上一级失败');
+								}
+							}
+						});
+					} else if (obj.event === 'updatecache') {
+						$.ajax({
+							url: 'http://localhost:8080/main/updatecache',
+							method: 'POST',
+							success: function(suc) {
+								//刷新页面
+								if (suc) {
+									location.reload();
+								} else {
+									layer.msg('缓存刷新失败');
+								}
+							}
+						});
+					} else if (obj.event === 'uploadfile') {
+						var fileoploadlayer = layer.open({
+							title: '文件上传',
+							type: 1,
+							skin: 'layui-layer-rim', //加上边框
+							area: ['420px', '240px'], //宽高
+							content: '<div id="upload-box" class="layui-upload" style="margin-top: 20px;text-align: center;"><button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button><br/><br/><button type="button" class="layui-btn" id="test9">开始上传</button></div>'
+						});
+						//选完文件后不自动上传
+						upload.render({
+							elem: '#test8',
+							url: 'http://localhost:8080/opt/super/upload' //改成您自己的上传接口
+								,
+							auto: false
+								//,multiple: true
+								,
+							bindAction: '#test9',
+							done: function(res) {
+								layer.close(fileoploadlayer);
+								layer.msg(res.msg);
+								//console.log(res);
+								location.reload();
+							}
+						});
+
+					} else if (obj.event === 'createfile') {
+						var rd = '';
+						layer.open({
+							title: '创建文件',
+							content: '<input id="filename" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="文件名" class="layui-input"><br/><input id="foldername" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="文件夹名" class="layui-input">',
+							yes: function(index, layero) {
+								//do something
+								var filename = $(layero.find('#filename')).val();
+								var foldername = $(layero.find('#foldername')).val();
+								var isfolder = false;
+								var name = filename;
+								if (filename !== '' && foldername === '') {
+									console.log("创建文件");
+									name = filename;
+									isfolder = false;
+								} else if (filename === '' && foldername !== '') {
+									console.log("创建文件夹");
+									name = foldername;
+									isfolder = true;
+								} else if (filename === '' && foldername === '') {
+									layer.msg("请输入文件夹或者文件夹名")
+									return;
+								} else if (filename !== '' && foldername !== '') {
+									layer.msg("只能输入一个类型");
+									return;
+								}
+								var reqdata = {
+									filename: name,
+									isfolder: isfolder
+								};
+								//创建文件（夹）
+								$.ajax({
+									url: 'http://localhost:8080/opt/super/create',
+									method: 'POST',
+									data: reqdata,
+									success: function(rel) {
+										layer.msg(rel.msg);
+										if (rel.code === 0) {
+											location.reload();
+										}
+									}
+								})
+								//
+								layer.close(index); //如果设定了yes回调，需进行手工关闭
+							}
+						})		
+					} else if (obj.event === 'lookfavorite') {
+						window.location = 'favorite.html';
+					}
+
+				});
+
+
+			});
+		</script>
+	</body>
+</html>
