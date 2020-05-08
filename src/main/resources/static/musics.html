@@ -7,8 +7,11 @@
 	</head>
 	<body>
 		<ul class="layui-nav layui-bg-blue">
+			<li class="layui-nav-item">
+				<a href="index.html"><i class="layui-icon layui-icon-home"></i></a>
+			</li>
 			<li class="layui-nav-item layui-this">
-				<a href="#">音乐<span id="music-count" class="layui-badge">0</span></a>
+				<a id="update-cache">音乐<span id="music-count" class="layui-badge">0</span></a>
 			</li>
 			<li class="layui-nav-item">
 				<a href="movies.html">视频</a>
@@ -19,15 +22,13 @@
 			<li class="layui-nav-item">
 				<a href="images.html">图片</a>
 			</li>
-			<li class="layui-nav-item">
-				<a href="index.html">返回主页</a>
-			</li>
 		</ul>
 		<div id="music-list-box" class="layui-container" style="margin-top: 20px">
 			<blockquote class="layui-elem-quote">
 				<div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
 					<div class="layui-col-md3">
 						名称
+<!--						<span id="update-cache" class="layui-badge layui-bg-green"><i class="layui-icon">&#xe669;</i></span>-->
 					</div>
 					<div class="layui-col-md2">
 						标题
@@ -176,6 +177,16 @@
 							})
 						}
 					}
+				});
+				//刷新缓存
+				$('#update-cache').click(function () {
+					$.post('http://localhost:8080/class/manage/del/cache',function (rel) {
+						if (rel.code === 0) {
+							location.reload()
+						}else {
+							layer.apply(rel.msg)
+						}
+					})
 				})
 
 			});

@@ -5,6 +5,7 @@ import com.example.demo1.dto.send.MusicDTOSend;
 import com.example.demo1.entity.ClassList;
 import com.example.demo1.enums.ClassType;
 import com.example.demo1.service.MusicsService;
+import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.MusicOptUtil;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,24 @@ public class MusicsServiceImpl implements MusicsService {
     private LoginServiceImpl loginServiceImpl;
     @Autowired
     private ClassManageServiceImpl classManageServiceImpl;
+    @Autowired
+    private CacheUtil cacheUtil;
 
 
     @Override
     public MusicDTOSend getAllMusic() {
         MusicDTOSend send = new MusicDTOSend();
+
+
+        if (cacheUtil.hasKey("music_list")){
+            List<MusicDTOSend.MusicNode> list = cacheUtil.getList("music_list", MusicDTOSend.MusicNode.class);
+            send.setCode(0);
+            send.setMsg("音乐列表获取成功[Cache]");
+            send.setCount(list.size());
+            send.setData(list);
+            return send;
+        }
+
         //得到当前用户id
         int userid = loginServiceImpl.getNowUser().getId();
         List<ClassList> musicClassList = classListMapper.selectByTypeAndUser(ClassType.音乐.value(), userid);
@@ -38,19 +52,6 @@ public class MusicsServiceImpl implements MusicsService {
             List<File> musicFiles = classManageServiceImpl.getFile(classList);
             //
             for (File musicFile : musicFiles) {
-//                MusicDTOSend.MusicNode musicNode = new MusicDTOSend.MusicNode();
-//                //音乐节点生成
-//                musicNode.setExt(StringOptUtil.fileExt(musicFile.getName()));
-//                musicNode.setId(nodes.size());
-//                musicNode.setPath(musicFile.getPath());
-//                musicNode.setName(musicFile.getName());
-//
-//                // TODO: 2020/4/19  需要修改
-//                musicNode.setLength(0);
-//                musicNode.setSheet("未知");
-//                musicNode.setSinger("未知");
-//                musicNode.setTitle("未知");
-//                //
                 MusicDTOSend.MusicNode musicNode = MusicOptUtil.toNode(musicFile);
                 musicNode.setId(nodes.size());
                 nodes.add(musicNode);
@@ -60,6 +61,7 @@ public class MusicsServiceImpl implements MusicsService {
         send.setMsg("音乐列表获取成功");
         send.setCount(nodes.size());
         send.setData(nodes);
+        cacheUtil.setList("music_list",nodes);
         return send;
     }
 

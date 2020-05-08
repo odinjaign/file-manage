@@ -59,6 +59,8 @@ public class FileOptUtil {
 
     public static List<File> lsFile2Num(List<File> rel, File folder, int num) {
         if (num == 0) return rel;
+        // 已处理
+        // if (!FileUtil.exist(folder)) return rel;
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 rel = lsFile2Num(rel, file, num - 1);

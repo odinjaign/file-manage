@@ -5,6 +5,7 @@ import com.example.demo1.dto.send.DocumentDTOSend;
 import com.example.demo1.entity.ClassList;
 import com.example.demo1.enums.ClassType;
 import com.example.demo1.service.DocumentsService;
+import com.example.demo1.util.CacheUtil;
 import com.example.demo1.util.DocumentOptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,22 @@ public class DocumentsServiceImpl implements DocumentsService {
     private ClassListMapper classListMapper;
     @Autowired
     private DocumentOptUtil documentOptUtil;
+    @Autowired
+    private CacheUtil cacheUtil;
+
 
     @Override
     public DocumentDTOSend getAllDocument() {
         DocumentDTOSend send = new DocumentDTOSend();
+
+        if (cacheUtil.hasKey("document_list")) {
+            List<DocumentDTOSend.DocumentNode> list = cacheUtil.getList("document_list", DocumentDTOSend.DocumentNode.class);
+            send.setCode(0);
+            send.setMsg("文档获取成功[Cache]");
+            send.setCount(list.size());
+            send.setData(list);
+            return send;
+        }
 
         //得到当前用户id
         int userid = loginServiceImpl.getNowUser().getId();
@@ -49,7 +62,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         send.setMsg("文档获取成功");
         send.setCount(nodes.size());
         send.setData(nodes);
-
+        cacheUtil.setList("document_list",nodes);
         return send;
     }
 

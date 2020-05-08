@@ -1,5 +1,6 @@
 package com.example.demo1.service.impl;
 
+import cn.hutool.core.io.FileUtil;
 import com.example.demo1.dao.ClassListMapper;
 import com.example.demo1.dto.send.NormalSend;
 import com.example.demo1.entity.ClassList;
@@ -146,6 +147,10 @@ public class ClassManageServiceImpl implements ClassManageService {
     public List<File> getFile(ClassList list) {
         List<File> files = new ArrayList<>();
         File folder = new File(list.getCheckfolder());
+        //索引目录被删除，不存在
+        if (!FileUtil.exist(folder)){
+            return files;
+        }
         int num = list.getChecklength();
         String exts = list.getCheckexts();
         List<File> allFiles = FileOptUtil.lsFile2Num(new ArrayList<File>(), folder, num);
@@ -172,6 +177,9 @@ public class ClassManageServiceImpl implements ClassManageService {
         NormalSend send = new NormalSend();
 
         cacheUtil.delete("img_list");
+        cacheUtil.delete("music_list");
+        cacheUtil.delete("movie_list");
+        cacheUtil.delete("document_list");
 
         send.setCode(0);
         send.setMsg("清除缓存完成");

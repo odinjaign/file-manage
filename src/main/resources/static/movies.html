@@ -8,10 +8,13 @@
 	<body>
 		<ul class="layui-nav layui-bg-blue">
 			<li class="layui-nav-item">
+				<a href="index.html"><i class="layui-icon layui-icon-home"></i></a>
+			</li>
+			<li class="layui-nav-item">
 				<a href="musics.html">音乐</a>
 			</li>
 			<li class="layui-nav-item layui-this">
-				<a href="#">视频<span id="movie-count" class="layui-badge">0</span></a>
+				<a id="update-cache">视频<span id="movie-count" class="layui-badge">0</span></a>
 			</li>
 			<li class="layui-nav-item">
 				<a href="documents.html">文档</a>
@@ -19,15 +22,13 @@
 			<li class="layui-nav-item">
 				<a href="images.html">图片</a>
 			</li>
-			<li class="layui-nav-item">
-				<a href="index.html">返回主页</a>
-			</li>
 		</ul>
 		<div id="movie-list-box" class="layui-container" style="margin-top: 20px">
 			<blockquote class="layui-elem-quote">
 				<div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
 					<div class="layui-col-md5">
 						名称
+<!--						<span id="update-cache" class="layui-badge layui-bg-green"><i class="layui-icon">&#xe669;</i></span>-->
 					</div>
 					<div class="layui-col-md2">
 						日期
@@ -151,10 +152,7 @@
 							});
 							$("#movie-count").html(rel.count);
 							$(".play-btn").click(function() {
-								// layer.msg();
 								var path = $(this).parent().attr("data-path");
-								//将\替换成/
-								// var realpath = path.replace(/\\/g, "/");
 								var realpath = encodeURIComponent(path);
 								layer.open({
 									type: 1,
@@ -178,9 +176,11 @@
 										filepath: path
 									},
 									success: function(rel) {
-										layer.msg(rel.msg);
 										if (rel.code === 0) {
-											location.reload();
+											//location.reload();
+											$("#update-cache").click();
+										}else {
+											layer.msg(rel.msg);
 										}
 									}
 								})
@@ -188,7 +188,16 @@
 						}
 					}
 				});
-
+				//刷新缓存
+				$('#update-cache').click(function () {
+					$.post('http://localhost:8080/class/manage/del/cache',function (rel) {
+						if (rel.code === 0) {
+							location.reload()
+						}else {
+							layer.apply(rel.msg)
+						}
+					})
+				})
 			});
 		</script>
 	</body>

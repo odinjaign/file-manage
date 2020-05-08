@@ -11,5 +11,5 @@ import java.io.IOException;
 public interface MoviesService {
     MovieDTOSend getAllMovie();
 
-    void playMovie(HttpServletRequest request, HttpServletResponse response, String path) throws IOException, ServletException;
+    void playMovie(HttpServletRequest request, HttpServletResponse response, String path) throws IOException, ServletException, Exception;
 }
