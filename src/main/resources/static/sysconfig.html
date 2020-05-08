@@ -97,7 +97,7 @@
 					';
 				}
 				//用户未登录的跳转
-				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+				$.post("/user/config/islogin", function(rel) {
 					if (rel.code === -1) {
 						layer.msg(rel.msg, function() {
 							window.location = "login.html";
@@ -106,7 +106,7 @@
 				})
 				
 				$("#logout-btn").click(function() {
-					$.post('http://127.0.0.1:8080/logout', function(rel) {
+					$.post('/logout', function(rel) {
 						if (rel) {
 							window.location = "login.html";
 						}
@@ -114,7 +114,7 @@
 				})
 				
 				
-				$.post('http://127.0.0.1:8080/sys/config/list',function(rel){
+				$.post('/sys/config/list',function(rel){
 					if(rel.code === 0){
 						$("#func-box").append(fucNodeTmp("文件隐藏",rel.data.filehide,"filehide"));
 						$("#func-box").append(fucNodeTmp("分类浏览",rel.data.typeview,"typeview"));
@@ -127,7 +127,7 @@
 							var _key = $(this).attr("data-key");
 							var _val = $(this).attr("data-value");
 							
-							$.post('http://127.0.0.1:8080/sys/config/modify',{key:_key,value:_val},function(rel){
+							$.post('/sys/config/modify',{key:_key,value:_val},function(rel){
 								if(rel.code === 0){
 									location.reload();
 								}
@@ -144,7 +144,7 @@
 					})
 				})
 				
-				$.post('http://127.0.0.1:8080/user/list',function(rel){
+				$.post('/user/list',function(rel){
 					if(rel.code === 0){
 						console.log(rel.data);
 						rel.data.forEach(function(val){
@@ -152,7 +152,7 @@
 						})
 						$('.del-user-btn').click(function(){
 							var _username = $(this).parent().attr('data-username');
-							$.post('http://localhost:8080/user/del',{username:_username},function(rel){
+							$.post('/user/del',{username:_username},function(rel){
 								layer.msg(rel.msg);
 							})
 						})
@@ -164,7 +164,7 @@
 								yes: function(index, layero) {
 									var _password = $(layero.find('.layui-input')).val();
 									console.log(_username,_password);
-									$.post('http://localhost:8080/user/resetpasswd', {
+									$.post('/user/resetpasswd', {
 										username: _username,
 										password: _password
 									}, function(rel) {

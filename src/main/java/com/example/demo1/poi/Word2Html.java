@@ -28,7 +28,8 @@ import java.io.*;
 public class Word2Html {
  
 	private final static String  tempPath = "C:/Users/jaign/test/img/";
-	private final static String imgurlPre = "http://localhost:8080/image/img?path=";
+//	private final static String imgurlPre = "http://localhost:8080/image/img?path=";
+	private final static String imgurlPre = "/image/img?path=";
 
 	/**
 	 * doc转换为html

@@ -60,7 +60,7 @@
 				var $ = layui.$;
 
 				//用户未登录的跳转
-				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+				$.post("/user/config/islogin", function(rel) {
 					if (rel.code === -1) {
 						layer.msg(rel.msg, function() {
 							window.location = "login.html";
@@ -73,6 +73,7 @@
 				})
 
 				function htmlTmp(path, num, exts, type) {
+
 					var extsArr = exts.split('|');
 					var html1 =
 						'\
@@ -184,7 +185,7 @@
 								//发送ajax请求
 								//添加收藏
 								$.ajax({
-									url:"http://localhost:8080/class/manage/add",
+									url:"/class/manage/add",
 									type:'POST',
 									data:reqdata,
 									success:function(rel){
@@ -202,7 +203,7 @@
 
 				//请求收藏列表：
 				$.ajax({
-					url:'http://localhost:8080/class/manage/items',
+					url:'/class/manage/items',
 					type:'POST',
 					success:function(data){
 						data.forEach(function(value,index){
@@ -264,7 +265,7 @@
 										console.log(reqdata);
 										//修改收藏
 										$.ajax({
-											url:"http://localhost:8080/class/manage/modify",
+											url:"/class/manage/modify",
 											type:'POST',
 											data:reqdata,
 											success:function(rel){
@@ -287,7 +288,7 @@
 							var path = searchDom.find('.data-path').html();
 							//移除索引
 							$.ajax({
-								url:"http://localhost:8080/class/manage/delete",
+								url:"/class/manage/delete",
 								type:'POST',
 								data:{
 									type:type,

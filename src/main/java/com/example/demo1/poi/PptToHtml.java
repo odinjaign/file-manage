@@ -15,7 +15,8 @@ import java.util.List;
 
 public class PptToHtml {
     private final static String  tempPath = "C:\\Users\\jaign\\test\\img\\ppt";
-    private final static String imgurlPre = "http://localhost:8080/image/img?path=";
+//    private final static String imgurlPre = "http://localhost:8080/image/img?path=";
+    private final static String imgurlPre = "/image/img?path=";
 
     private static List<String> pptToPicture(String tempContextUrl, String outPath) {
         //文件夹名

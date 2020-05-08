@@ -29,7 +29,7 @@
 					$ = layui.$;
 
 				//用户未登录的跳转
-				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+				$.post("/user/config/islogin", function(rel) {
 					if (rel.code === -1) {
 						layer.msg(rel.msg, function() {
 							window.location = "login.html";
@@ -40,7 +40,7 @@
 						})
 					}
 				})
-				$.post("http://127.0.0.1:8080/sys/config/get", {
+				$.post("/sys/config/get", {
 					key: "favorite"
 				}, function(status) {
 					if (!status) {
@@ -76,7 +76,7 @@
 				};
 
 				$.ajax({
-					url: 'http://localhost:8080/favorite/list',
+					url: '/favorite/list',
 					type: 'POST',
 					error: function(err) {
 						console.log(err);
@@ -90,7 +90,7 @@
 						$(".remove-btn").click(function(x) {
 							var path = $(this).parent().find('blockquote').html();
 							$.ajax({
-								url: 'http://localhost:8080/favorite/remove',
+								url: '/favorite/remove',
 								type: 'POST',
 								data: {
 									path: path
@@ -114,7 +114,7 @@
 								//文件夹
 								console.log('文件夹查看');
 								$.ajax({
-									url: 'http://localhost:8080/main/enterfolder',
+									url: '/main/enterfolder',
 									type: 'POST',
 									data: {
 										folder: path

@@ -80,7 +80,7 @@
         });
 		// 获取验证码,并渲染
 		$.ajax({
-			url:'http://localhost:8080/captcha/generate',
+			url:'/captcha/generate',
 			type:'GET',
 			success:function(data){
 				$("#captchaPic").attr('src',data.url);
@@ -103,7 +103,7 @@
                 return false;
             }
 			$.ajax({
-				url:'http://localhost:8080/login',
+				url:'/login',
 				type:'POST',
 				data:data,
 				error:function(err){

@@ -49,7 +49,7 @@
 				var upload = layui.upload;
 				
 				//用户未登录的跳转
-				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+				$.post("/user/config/islogin", function(rel) {
 					if (rel.code === -1) {
 						layer.msg(rel.msg, function() {
 							window.location = "login.html";
@@ -61,18 +61,18 @@
 					}
 				})
 				
-				$.post("http://127.0.0.1:8080/sys/config/get",{key:"typeview"},function(status){
+				$.post("/sys/config/get",{key:"typeview"},function(status){
 					if(!status){
 						$("#typeview-btn").remove();
 					}
 				})
 				
-				$.post("http://127.0.0.1:8080/sys/config/get",{key:"favorite"},function(status){
+				$.post("/sys/config/get",{key:"favorite"},function(status){
 					if(!status){
 						$("#favorite-btn").remove();
 					}
 				})
-				$.post("http://127.0.0.1:8080/sys/config/get",{key:"upload"},function(status){
+				$.post("/sys/config/get",{key:"upload"},function(status){
 					if(!status){
 						$("#upload-btn").remove();
 					}
@@ -82,7 +82,7 @@
 				var file_table = table.render({
 					elem: '#file-table',
 					height: 'full-120',
-					url: 'http://localhost:8080/main/list',
+					url: '/main/list',
 					toolbar: '#headToolbar',
 					page: true //开启分页
 						,
@@ -126,7 +126,7 @@
 
 				//渲染标题
 				$.ajax({
-					url: 'http://localhost:8080/main/pwd',
+					url: '/main/pwd',
 					method: 'POST',
 					success: function(data) {
 						console.log(data);
@@ -140,7 +140,7 @@
 						layer.msg(data.path);
 					} else if (obj.event === 'enter') {
 						$.ajax({
-							url: 'http://localhost:8080/main/enterfolder',
+							url: '/main/enterfolder',
 							method: 'POST',
 							data: {
 								folder: data.path
@@ -163,7 +163,7 @@
 												folder: data.path
 											};
 											$.ajax({
-												url: 'http://localhost:8080/main/enterfolder',
+												url: '/main/enterfolder',
 												method: 'POST',
 												data: reqdata,
 												success: function(rel) {
@@ -192,7 +192,7 @@
 									folder: folder
 								};
 								$.ajax({
-									url: 'http://localhost:8080/opt/copyto',
+									url: '/opt/copyto',
 									method: 'POST',
 									data: reqdata,
 									success: function(rel) {
@@ -219,7 +219,7 @@
 									folder: folder
 								};
 								$.ajax({
-									url: 'http://localhost:8080/opt/moveto',
+									url: '/opt/moveto',
 									method: 'POST',
 									data: reqdata,
 									success: function(rel) {
@@ -249,7 +249,7 @@
 									newname: newname
 								};
 								$.ajax({
-									url: 'http://localhost:8080/opt/rename',
+									url: '/opt/rename',
 									method: 'POST',
 									data: reqdata,
 									success: function(rel) {
@@ -267,7 +267,7 @@
 							filepath: obj.data.path
 						};
 						$.ajax({
-							url: 'http://localhost:8080/opt/delete',
+							url: '/opt/delete',
 							method: 'POST',
 							data: reqdata,
 							success: function(rel) {
@@ -282,14 +282,14 @@
 						// 	filepath:obj.data.path
 						// };
 						//文件下载
-						var url = 'http://localhost:8080/opt/super/download?filepath=' + obj.data.path;
+						var url = '/opt/super/download?filepath=' + obj.data.path;
 						const link = document.createElement('a');
 						link.href = url.replace(/\\/g, "/");
 						link.click();
 
 					} else if (obj.event === 'addfavorite') {
 						$.ajax({
-							url: 'http://localhost:8080/favorite/add',
+							url: '/favorite/add',
 							method: 'POST',
 							data: {
 								path: obj.data.path
@@ -303,7 +303,7 @@
 				table.on('toolbar(file-list)', function(obj) {
 					if (obj.event === 'returnlast') {
 						$.ajax({
-							url: 'http://localhost:8080/main/returnlast',
+							url: '/main/returnlast',
 							method: 'POST',
 							success: function(suc) {
 								//刷新页面
@@ -318,7 +318,7 @@
 						});
 					} else if (obj.event === 'updatecache') {
 						$.ajax({
-							url: 'http://localhost:8080/main/updatecache',
+							url: '/main/updatecache',
 							method: 'POST',
 							success: function(suc) {
 								//刷新页面
@@ -340,7 +340,7 @@
 						//选完文件后不自动上传
 						upload.render({
 							elem: '#test8',
-							url: 'http://localhost:8080/opt/super/upload' //改成您自己的上传接口
+							url: '/opt/super/upload' //改成您自己的上传接口
 								,
 							auto: false
 								//,multiple: true
@@ -386,7 +386,7 @@
 								};
 								//创建文件（夹）
 								$.ajax({
-									url: 'http://localhost:8080/opt/super/create',
+									url: '/opt/super/create',
 									method: 'POST',
 									data: reqdata,
 									success: function(rel) {

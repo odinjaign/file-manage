@@ -117,21 +117,23 @@ public class ClassManageServiceImpl implements ClassManageService {
         User nowUser = loginServiceImpl.getNowUser();
         int userid = nowUser.getId();
         File file = new File(path);
-        if (!file.exists()) {
-            send.setCode(-2);
-            send.setMsg("路径不存在");
-            return send;
-        }
-        if (file.isFile()) {
-            send.setCode(-3);
-            send.setMsg("路径不是目录");
-            return send;
-        }
-        if (!FileOptUtil.fileInFolder(file, mainListServiceImpl.getNowUserRootFolder())) {
-            send.setCode(-4);
-            send.setMsg("路径不再您的权限范围内");
-            return send;
-        }
+
+        // 移出索引，不校验
+//        if (!file.exists()) {
+//            send.setCode(-2);
+//            send.setMsg("路径不存在");
+//            return send;
+//        }
+//        if (file.isFile()) {
+//            send.setCode(-3);
+//            send.setMsg("路径不是目录");
+//            return send;
+//        }
+//        if (!FileOptUtil.fileInFolder(file, mainListServiceImpl.getNowUserRootFolder())) {
+//            send.setCode(-4);
+//            send.setMsg("路径不再您的权限范围内");
+//            return send;
+//        }
         ClassList classList = new ClassList();
         classList.setCheckfolder(file.getPath());
         classList.setClasstype(type);

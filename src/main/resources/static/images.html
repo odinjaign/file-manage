@@ -60,7 +60,7 @@
 				var $ = layui.$;
 
 				//用户未登录的跳转
-				$.post("http://localhost:8080/user/config/islogin", function(rel) {
+				$.post("/user/config/islogin", function(rel) {
 					if (rel.code === -1) {
 						layer.msg(rel.msg, function() {
 							window.location = "login.html";
@@ -71,7 +71,7 @@
 						})
 					}
 				})
-				$.post("http://127.0.0.1:8080/sys/config/get", {
+				$.post("/sys/config/get", {
 					key: "typeview"
 				}, function(status) {
 					if (!status) {
@@ -114,7 +114,7 @@
 				};
 
 				$.ajax({
-					url: 'http://localhost:8080/image/list',
+					url: '/image/list',
 					type: 'POST',
 					success: function(rel) {
 						console.log(rel.msg);
@@ -129,7 +129,7 @@
 								var path = $(this).parent().attr("data-path");
 								var w = $(this).parent().attr("data-w");
 								var h = $(this).parent().attr("data-h");
-								var _url = 'http://localhost:8080/image/img?path=' + encodeURIComponent(path);
+								var _url = '/image/img?path=' + encodeURIComponent(path);
 								w = h > 600 ? w / h * 600 : w
 								h = h > 600 ? 600 : h
 								layer.open({
@@ -147,7 +147,7 @@
 
 								var path = $(this).parent().attr("data-path");
 								$.ajax({
-									url: 'http://localhost:8080/opt/delete',
+									url: '/opt/delete',
 									method: 'POST',
 									data: {
 										filepath: path
@@ -166,7 +166,7 @@
 
 				//刷新缓存
 				$('#update-cache').click(function () {
-					$.post('http://localhost:8080/class/manage/del/cache',function (rel) {
+					$.post('/class/manage/del/cache',function (rel) {
 						if (rel.code === 0) {
 							location.reload()
 						}else {

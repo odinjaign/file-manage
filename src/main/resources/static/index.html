@@ -111,13 +111,13 @@
             view_config = data;
         })
 
-        $.post('http://localhost:8080/main/pwd', function (rel) {
+        $.post('/main/pwd', function (rel) {
             console.log(rel);
             $('#now-path-span').text(rel);
         });
 
         //用户未登录的跳转
-        $.post("http://localhost:8080/user/config/islogin", function (rel) {
+        $.post("/user/config/islogin", function (rel) {
             if (rel.code === -1) {
                 layer.msg(rel.msg, function () {
                     window.location = "login.html";
@@ -128,12 +128,12 @@
                 })
             }
         })
-        $.post("http://127.0.0.1:8080/sys/config/get", {key: "typeview"}, function (status) {
+        $.post("/sys/config/get", {key: "typeview"}, function (status) {
             if (!status) {
                 $("#typeview-btn").remove();
             }
         })
-        $.post("http://127.0.0.1:8080/sys/config/get", {key: "upload"}, function (status) {
+        $.post("/sys/config/get", {key: "upload"}, function (status) {
             if (!status) {
                 $("#upload-btn").remove();
             }
@@ -142,7 +142,7 @@
 
         $('#return-last-btn').click(function () {
             $.ajax({
-                url: 'http://localhost:8080/main/returnlast',
+                url: '/main/returnlast',
                 method: 'POST',
                 success: function (suc) {
                     //刷新页面
@@ -187,7 +187,7 @@
                     };
                     //创建文件（夹）
                     $.ajax({
-                        url: 'http://localhost:8080/opt/super/create',
+                        url: '/opt/super/create',
                         method: 'POST',
                         data: reqdata,
                         success: function (rel) {
@@ -213,7 +213,7 @@
             //选完文件后不自动上传
             upload.render({
                 elem: '#test8',
-                url: 'http://localhost:8080/opt/super/upload' //改成您自己的上传接口
+                url: '/opt/super/upload' //改成您自己的上传接口
                 ,
                 auto: false
                 //,multiple: true
@@ -229,7 +229,7 @@
         })
         $('#refresh-cache-btn').click(function () {
             $.ajax({
-                url: 'http://localhost:8080/main/updatecache',
+                url: '/main/updatecache',
                 method: 'POST',
                 success: function (suc) {
                     //刷新页面
@@ -328,7 +328,7 @@
         }
 
 
-        $.post('http://localhost:8080/main/list', function (rel) {
+        $.post('/main/list', function (rel) {
             console.log(rel);
             if (rel.code === 0) {
                 // $('#file-list-box').append(fileNode());
@@ -359,7 +359,7 @@
                     if (_type === '文件夹') {
                         //layer.msg("进入文件夹")
                         $.ajax({
-                            url: 'http://localhost:8080/main/enterfolder',
+                            url: '/main/enterfolder',
                             method: 'POST',
                             data: {
                                 folder: _path
@@ -382,7 +382,7 @@
                                                 folder: _path
                                             };
                                             $.ajax({
-                                                url: 'http://localhost:8080/main/enterfolder',
+                                                url: '/main/enterfolder',
                                                 method: 'POST',
                                                 data: reqdata,
                                                 success: function (rel) {
@@ -409,7 +409,7 @@
                         }, function () {
                             //layer.msg('解压');
                             //解压文件
-                            $.post('http://localhost:8080/opt/super/unzip', {path: _path}, function () {
+                            $.post('/opt/super/unzip', {path: _path}, function () {
                                 layer.msg(rel.msg);
                                 if (rel.code === 0) {
                                     location.reload();
@@ -426,7 +426,7 @@
                                         path: _path,
                                         folder: folder
                                     };
-                                    $.post('http://localhost:8080/opt/super/unzip', reqdata, function () {
+                                    $.post('/opt/super/unzip', reqdata, function () {
                                         layer.msg(rel.msg);
                                         if (rel.code === 0) {
                                             location.reload();
@@ -439,7 +439,7 @@
                         //['C', 'YML', 'CPP', 'JAVA', 'BAT', 'REG', 'JS', 'CSS', 'HTML', 'XML', 'PROPERTIES']
                     } else if (view_config.code.includes(_type)) {
                         //layer.msg("查看代码类型文件")
-                        $.post('http://localhost:8080/file/view/text/code', {path: _path}, function (rel) {
+                        $.post('/file/view/text/code', {path: _path}, function (rel) {
                             console.log(rel);
                             var e_code = $("<div>").text(rel.data).html();
                             layer.open({
@@ -454,7 +454,7 @@
 
                         })
                     } else if (['DOCX', 'DOC'].includes(_type)) {
-                        $.post("http://localhost:8080/file/view/office/word", {path: _path}, function (rel) {
+                        $.post("/file/view/office/word", {path: _path}, function (rel) {
                             if (rel.code === 1) {
                                 layer.open({
                                     type: 1,
@@ -470,7 +470,7 @@
                             }
                         })
                     } else if (['XLSX', 'XLS'].includes(_type)) {
-                        $.post("http://localhost:8080/file/view/office/excel", {path: _path}, function (rel) {
+                        $.post("/file/view/office/excel", {path: _path}, function (rel) {
                             if (rel.code === 1) {
                                 layer.open({
                                     type: 1,
@@ -486,7 +486,7 @@
                             }
                         })
                     } else if (['PPT', 'PPTX'].includes(_type)) {
-                        $.post("http://localhost:8080/file/view/office/ppt", {path: _path}, function (rel) {
+                        $.post("/file/view/office/ppt", {path: _path}, function (rel) {
                             if (rel.code === 1) {
                                 layer.open({
                                     type: 1,
@@ -516,7 +516,7 @@
                             }
                         }
 
-                        var _url = 'http://localhost:8080/image/img?path=' + encodeURIComponent(_path);
+                        var _url = '/image/img?path=' + encodeURIComponent(_path);
 
                         getImageWidth(_url, function (w, h) {
                             w = h > 600 ? w / h * 600 : w
@@ -549,7 +549,7 @@
                                 folder: folder
                             };
                             $.ajax({
-                                url: 'http://localhost:8080/opt/moveto',
+                                url: '/opt/moveto',
                                 method: 'POST',
                                 data: reqdata,
                                 success: function (rel) {
@@ -578,7 +578,7 @@
                                 folder: folder
                             };
                             $.ajax({
-                                url: 'http://localhost:8080/opt/copyto',
+                                url: '/opt/copyto',
                                 method: 'POST',
                                 data: reqdata,
                                 success: function (rel) {
@@ -608,7 +608,7 @@
                                 newname: newname
                             };
                             $.ajax({
-                                url: 'http://localhost:8080/opt/rename',
+                                url: '/opt/rename',
                                 method: 'POST',
                                 data: reqdata,
                                 success: function (rel) {
@@ -626,14 +626,14 @@
                     var _path = $(this).parent().attr('data-path');
                     console.log("下载:", _path);
                     const link = document.createElement('a');
-                    link.href = 'http://localhost:8080/opt/super/download?filepath=' + encodeURIComponent(_path);
+                    link.href = '/opt/super/download?filepath=' + encodeURIComponent(_path);
                     link.click();
                 })
                 $('.file-delete-btn').click(function () {
                     var _path = $(this).parent().attr('data-path');
                     console.log("删除:", _path);
                     $.ajax({
-                        url: 'http://localhost:8080/opt/delete',
+                        url: '/opt/delete',
                         method: 'POST',
                         data: {
                             filepath: _path
@@ -659,7 +659,7 @@
                     }, function () {
                         //layer.msg('压缩');
                         //解压文件
-                        $.post('http://localhost:8080/opt/super/zip', {folder: _path}, function (rel) {
+                        $.post('/opt/super/zip', {folder: _path}, function (rel) {
                             layer.msg(rel.msg);
                             if (rel.code === 0) {
                                 location.reload();
@@ -676,7 +676,7 @@
                                     folder: _path,
                                     dst: _dst
                                 };
-                                $.post('http://localhost:8080/opt/super/zip', reqdata, function (rel) {
+                                $.post('/opt/super/zip', reqdata, function (rel) {
                                     layer.msg(rel.msg);
                                     if (rel.code === 0) {
                                         location.reload();
@@ -688,7 +688,7 @@
                     });
                 })
 
-                $.post('http://localhost:8080/sys/config/get', {
+                $.post('/sys/config/get', {
                     key: 'favorite'
                 }, function (rel) {
                     // console.log(rel);
@@ -701,7 +701,7 @@
                                 // todo 收藏
                                 //console.log('添加收藏',_path);
                                 $.ajax({
-                                    url: 'http://localhost:8080/favorite/add',
+                                    url: '/favorite/add',
                                     method: 'POST',
                                     data: {
                                         path: _path
@@ -716,7 +716,7 @@
                                 //取消收藏
                                 //console.log('取消收藏');
                                 $.ajax({
-                                    url: 'http://localhost:8080/favorite/remove',
+                                    url: '/favorite/remove',
                                     method: 'POST',
                                     data: {
                                         path: _path
