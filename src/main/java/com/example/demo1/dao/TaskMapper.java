@@ -11,4 +11,6 @@ public interface TaskMapper {
     void insertTask(Task task);
     Integer getCount();
     Task selectTaskByID(String taskid);
+
+    void deleteTaskByID(String taskid);
 }

@@ -34,4 +34,9 @@ public class FileViewController {
     public StringDTOSend viewPpt(String path){
         return fileViewServiceImpl.viewPpt(path);
     }
+
+    @PostMapping("text/md")
+    public StringDTOSend viewMd(String path){
+        return fileViewServiceImpl.viewMd(path);
+    }
 }

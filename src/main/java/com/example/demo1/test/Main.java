@@ -1,6 +1,6 @@
 package com.example.demo1.test;
 
-import cn.hutool.core.util.ReUtil;
+import com.example.demo1.poi.Md2Html;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
@@ -20,7 +20,9 @@ public class Main {
 //            e.printStackTrace();
 //        }
 
-        System.out.println(ReUtil.isMatch(".*\\.txt$", "你好a.t.xt"));
+        String s = Md2Html.mdToHtmlByFile("C:\\Users\\jaign\\test\\jaign\\a\\README.md");
+//        System.out.println(new File("file/huimarkdown.css").getAbsolutePath());
+        System.out.println(s);
 
     }
 }

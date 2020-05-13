@@ -3,6 +3,7 @@ package com.example.demo1.service.impl;
 import cn.hutool.core.io.FileUtil;
 import com.example.demo1.dto.send.StringDTOSend;
 import com.example.demo1.poi.Excel2Html;
+import com.example.demo1.poi.Md2Html;
 import com.example.demo1.poi.PptToHtml;
 import com.example.demo1.poi.Word2Html;
 import com.example.demo1.service.FileViewService;
@@ -88,6 +89,24 @@ public class FileViewServiceImpl implements FileViewService {
         send.setExt("html");
         String s = FileUtil.readString(tempFile, "utf-8");
         send.setData(s);
+        return send;
+
+    }
+
+    @Override
+    public StringDTOSend viewMd(String path) {
+        StringDTOSend send = new StringDTOSend();
+        File file = new File(path);
+        if (!file.exists()) {
+            send.setCode(-1);
+            send.setMsg("文件不存在");
+            return send;
+        }
+        String html = Md2Html.mdToHtmlByContent(FileUtil.readUtf8String(file));
+        send.setCode(1);
+        send.setMsg("Md转Html完成");
+        send.setData(html);
+        send.setExt("html");
         return send;
 
     }

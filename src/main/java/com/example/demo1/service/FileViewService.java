@@ -10,4 +10,6 @@ public interface FileViewService {
     StringDTOSend viewExcel(String path);
 
     StringDTOSend viewPpt(String path);
+
+    StringDTOSend viewMd(String path);
 }

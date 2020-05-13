@@ -1,185 +1,105 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>系统配置</title>
-		<link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
-	</head>
-	<body>
+<head>
+    <meta charset="utf-8">
+    <title>系统配置</title>
+    <link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+</head>
+<body>
 <div class="layui-container" style="margin-top: 20px;">
-			<fieldset class="layui-elem-field layui-field-title">
-				<legend>系统配置</legend>
-				<div class="layui-field-box">
-					<button id="logout-btn" class="layui-btn layui-btn-sm layui-bg-red">退出登录</button>
-					<a href="index.html" class="layui-btn layui-btn-sm">浏览主页</a>
-					<div class="layui-field-box">
-						<div class="layui-collapse">
-							<div class="layui-colla-item">
-								<h2 class="layui-colla-title">系统功能状态</h2>
-								<div id="func-box" class="layui-colla-content layui-show">
-									<div class="layui-row">
-										<div class="layui-col-md2" style="text-align: center;">
-											功能名
-										</div>
-										<div class="layui-col-md2">
-											功能状态
-											<!-- <span class="layui-badge layui-bg-orange">启用</span> -->
-										</div>
-										<div class="layui-col-md7">
-											
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="layui-colla-item">
-								<h2 class="layui-colla-title">用户管理</h2>
-								<div class="layui-colla-content layui-show">
-									<button id="add-user-btn" style="margin-bottom: 10px;" type="button" class="layui-btn layui-btn-sm">添加用户</button>
-									<br>
-									<div class="layui-row layui-col-space10" id="userInfo">
-										
-										
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</fieldset>
-		</div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>系统配置</legend>
+        <div class="layui-field-box">
+            <button id="logout-btn" class="layui-btn layui-btn-sm layui-bg-red">退出登录</button>
+            <a href="index.html" class="layui-btn layui-btn-sm">浏览主页</a>
+            <div class="layui-field-box">
+                <div class="layui-collapse">
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">系统功能状态</h2>
+                        <div id="func-box" class="layui-colla-content layui-show">
+                            <div class="layui-row">
+                                <div class="layui-col-md2" style="text-align: center;">
+                                    功能名
+                                </div>
+                                <div class="layui-col-md2">
+                                    功能状态
+                                </div>
+                                <div class="layui-col-md7">
 
-		<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
-		<script type="text/javascript">
-			layui.use(['layer', 'element'], function() {
-				var layer = layui.layer;
-				var element = layui.element;
-				var $ = layui.$;
-				
-				function fucNodeTmp(name,value,key){
-					
-					return '\
-					<div class="layui-row" style="margin-top: 10px;">\
-						<div class="layui-col-md2" style="text-align: center;">\
-							'+name+'\
-						</div>\
-						<div class="layui-col-md2">\
-							<span class="layui-badge layui-bg-'+(value?'orange">':'gray">未')+'启用</span>\
-						</div>\
-						<div class="layui-col-md7">\
-							<button data-key="'+key+'" data-value="'+!value+'" class="modify-btn layui-btn layui-btn-xs">'+(value?'禁用':'启用')+'</button>\
-						</div>\
-					</div>\
-					';
-					
-				}
-				
-				function userNodeTmp(node){
-					return '\
-					<div class="layui-col-md4">\
-						<blockquote class="layui-elem-quote">\
-							<div class="layui-row">\
-								<div class="layui-col-xs8">\
-									<i class="layui-icon layui-icon-'+(node.gender===1?'':'fe')+'male"></i>\
-									<span>'+node.nickname+'</span><br>\
-									<i class="layui-icon layui-icon-username"></i>\
-									<span>'+node.username+'</span>'+(node.nowuser?'<span class="layui-badge-dot layui-bg-orange"></span>':'')+'<br>\
-									<i class="layui-icon layui-icon-email"></i>\
-									<span>'+node.email+'</span>\
-								</div>\
-								<div class="layui-col-xs4" style="text-align: right;" data-username="'+node.username+'">\
-									<button type="button" class="del-user-btn layui-btn layui-bg-red layui-btn-xs">删除用户</button>\
-									<button type="button" class="reset-password-btn layui-btn layui-btn-xs">重置密码</button>\
-								</div>\
-							</div>\
-						</blockquote>\
-					</div>\
-					';
-				}
-				//用户未登录的跳转
-				$.post("/user/config/islogin", function(rel) {
-					if (rel.code === -1) {
-						layer.msg(rel.msg, function() {
-							window.location = "login.html";
-						})
-					}    
-				})
-				
-				$("#logout-btn").click(function() {
-					$.post('/logout', function(rel) {
-						if (rel) {
-							window.location = "login.html";
-						}
-					})
-				})
-				
-				
-				$.post('/sys/config/list',function(rel){
-					if(rel.code === 0){
-						$("#func-box").append(fucNodeTmp("文件隐藏",rel.data.filehide,"filehide"));
-						$("#func-box").append(fucNodeTmp("分类浏览",rel.data.typeview,"typeview"));
-						$("#func-box").append(fucNodeTmp("文件收藏",rel.data.favorite,"favorite"));
-						$("#func-box").append(fucNodeTmp("操作日志",rel.data.optlogs,"optlogs"));
-						$("#func-box").append(fucNodeTmp("文件上传",rel.data.upload,"upload"));
-						$("#func-box").append(fucNodeTmp("系统隐藏文件",rel.data.syshide,"syshide"));
-						//渲染操作
-						$('.modify-btn').click(function(){
-							var _key = $(this).attr("data-key");
-							var _val = $(this).attr("data-value");
-							
-							$.post('/sys/config/modify',{key:_key,value:_val},function(rel){
-								if(rel.code === 0){
-									location.reload();
-								}
-							});
-						})
-					}else{
-						layer.msg(rel.msg);
-					}
-				});
-				
-				$("#add-user-btn").click(function(){
-					layer.msg("请前往注册页面注册用户",function(){
-						window.location = "register.html";
-					})
-				})
-				
-				$.post('/user/list',function(rel){
-					if(rel.code === 0){
-						console.log(rel.data);
-						rel.data.forEach(function(val){
-							$('#userInfo').append(userNodeTmp(val))
-						})
-						$('.del-user-btn').click(function(){
-							var _username = $(this).parent().attr('data-username');
-							$.post('/user/del',{username:_username},function(rel){
-								layer.msg(rel.msg);
-							})
-						})
-						$('.reset-password-btn').click(function(){
-							var _username = $(this).parent().attr('data-username');
-							layer.open({
-								title: '重置密码:',
-								content: '<input type="text" name="path" autocomplete="off" placeholder="请输入密码" class="layui-input">',
-								yes: function(index, layero) {
-									var _password = $(layero.find('.layui-input')).val();
-									console.log(_username,_password);
-									$.post('/user/resetpasswd', {
-										username: _username,
-										password: _password
-									}, function(rel) {
-										layer.msg(rel.msg);
-									})
-									layer.close(index);
-								}
-							})
-						})
-					}
-				})
-				
-				
-				
-			});
-		</script>
-	</body>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title">用户管理</h2>
+                        <div class="layui-colla-content layui-show">
+                            <button id="add-user-btn" style="margin-bottom: 10px;" type="button"
+                                    class="layui-btn layui-btn-sm">添加用户
+                            </button>
+                            <br>
+                            <div class="layui-row layui-col-space10" id="userInfo">
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="task-manage-div" class="layui-colla-item">
+                        <h2 class="layui-colla-title">任务管理</h2>
+                        <div id="task-list-box" class="layui-colla-content layui-show" style="padding-top: 20px">
+                            <span class="layui-badge layui-bg-gray" style="margin-left: 20px">添加任务:</span>
+                            <div class="layui-btn-group">
+                                <button type="button" data-task-type='1'
+                                        class="add-task-btn layui-bg-blue layui-btn layui-btn-sm">复制
+                                </button>
+                                <button type="button" data-task-type='2'
+                                        class="add-task-btn layui-bg-blue layui-btn layui-btn-sm">移动
+                                </button>
+                                <button type="button" data-task-type='3'
+                                        class="add-task-btn layui-bg-blue layui-btn layui-btn-sm">重命名
+                                </button>
+                                <button type="button" data-task-type='4'
+                                        class="add-task-btn layui-bg-blue layui-btn layui-btn-sm">删除
+                                </button>
+                            </div>
+                            <span id="get-cron-info" class="layui-badge layui-bg-gray layui-btn" style="margin-left: 20px">什么是CRON表达式？</span>
+                            <br><br>
+                            <blockquote class="layui-elem-quote">
+                                <div class="layui-row layui-col-space5" style="text-align: center;color: #009688;">
+                                    <div class="layui-col-md1">
+                                        任务ID
+                                    </div>
+                                    <div class="layui-col-md2" style="text-align: left">
+                                        任务名
+                                    </div>
+                                    <div class="layui-col-md1">
+                                        任务类型
+                                    </div>
+                                    <div class="layui-col-md1">
+                                        任务状态
+                                    </div>
+                                    <div class="layui-col-md3">
+                                        操作路径|文件
+                                    </div>
+                                    <div class="layui-col-md2">
+                                        目标路径
+                                    </div>
+                                    <div class="layui-col-md2">
+                                        操作
+                                    </div>
+                                </div>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/custom/sys_config.js" type="text/javascript" charset="utf-8"></script>
+
+</body>
 </html>

@@ -19,4 +19,8 @@
         select count(*) from task;
     </select>
 
+    <delete id="deleteTaskByID">
+        delete from task where taskid=#{taskid}
+    </delete>
+
 </mapper>

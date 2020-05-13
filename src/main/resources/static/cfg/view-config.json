@@ -17,5 +17,10 @@
     "JPG",
     "PNG",
     "JPEG"
-  ]
+  ],
+  "office": {
+    "word": ["DOC","DOCX"],
+    "ppt": ["PPT","PPTX"],
+    "excel": ["XLS","XLSX"]
+  }
 }
