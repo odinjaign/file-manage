@@ -11,12 +11,15 @@
     "HTML",
     "XML",
     "PROPERTIES",
-    "SQL"
+    "SQL",
+    "TXT"
   ],
   "img": [
     "JPG",
     "PNG",
-    "JPEG"
+    "JPEG",
+    "GIF",
+    "ICO"
   ],
   "office": {
     "word": ["DOC","DOCX"],

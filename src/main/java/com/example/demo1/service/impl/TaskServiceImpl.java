@@ -30,6 +30,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public NormalSend addTask(Task task) {
         NormalSend send = new NormalSend();
+        if (!FileUtil.exist(task.getFolder())) {
+            send.setCode(-1);
+            send.setMsg("目录不存在，请检查目录是否填写正确。");
+            return send;
+        }
         //获取id
         Integer count = taskMapper.getCount();
         String taskid = "task-" + (count + 1);

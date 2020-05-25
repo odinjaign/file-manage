@@ -1,6 +1,7 @@
-layui.use(['layer', 'code'], function () {
+layui.use(['layer', 'code','upload'], function () {
     var layer = layui.layer;
     var $ = layui.$;
+    var upload = layui.upload;
 
     //文件节点函数
     function fileNode(node) {
@@ -61,10 +62,10 @@ layui.use(['layer', 'code'], function () {
                         <button type="button" class="file-rename-btn layui-btn layui-btn-xs">重命名</button>\
                     </div>\
                     <div class="layui-btn-group btn-group-2" data-path="' + _path + '">\
-									<button type="button" class="file-delete-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe640;</i></button>\
-									<button type="button" class="file-download-btn delete-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe601;</i></button>\
-									<button type="button" class="file-info-btn layui-btn layui-btn-primary layui-btn-xs"><i class="layui-icon">&#xe702;</i></button>\
-									<button type="button" class="file-zip-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe857;</i></button>\
+									<button type="button" title="删除文件" class="file-delete-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe640;</i></button>\
+									<button type="button" title="下载文件" class="file-download-btn delete-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe601;</i></button>\
+									<button type="button" title="文件路径" class="file-info-btn layui-btn layui-btn-primary layui-btn-xs"><i class="layui-icon">&#xe702;</i></button>\
+									<button type="button" title="压缩文件" class="file-zip-btn layui-btn layui-btn-xs"><i class="layui-icon">&#xe857;</i></button>\
 								</div>\
 							</div>\
 						</div>\
@@ -103,9 +104,9 @@ layui.use(['layer', 'code'], function () {
                     elem: '#test8',
                     url: '/opt/super/upload' //改成您自己的上传接口
                     ,
-                    auto: false
-                    //,multiple: true
-                    ,
+                    auto: false,
+                    //multiple: true,
+                    accept: 'file',
                     bindAction: '#test9',
                     done: function (res) {
                         layer.close(fileoploadlayer);
@@ -148,7 +149,8 @@ layui.use(['layer', 'code'], function () {
                     }
                 });
             })
-            $('#add-file-btn').click(function () {
+            // 旧版文件/文件夹添加逻辑
+            $('#add-file-btn-old').click(function () {
                 layer.open({
                     title: '创建文件',
                     content: '<input id="filename" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="文件名" class="layui-input"><br/><input id="foldername" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="文件夹名" class="layui-input">',
@@ -194,6 +196,58 @@ layui.use(['layer', 'code'], function () {
                     }
                 })
             })
+
+            $('#add-file-btn').click(function () {
+                //添加文件注册事件
+                layer.confirm('添加文件还是文件夹？', {
+                    btn: ['文件', '文件夹'] //按钮
+                }, function () {
+                    //文件按钮
+                    layer.msg('添加文件', {icon: 1});
+                    layer.alert('<input id="filename" type="text" name="title"  autocomplete="off" placeholder="文件名" class="layui-input">', {
+                        skin: 'layui-layer-molv' //样式类名
+                        , closeBtn: 1
+                    }, function (index, layero) {
+                        var filename = $(layero.find('#filename')).val();
+                        if (filename === ''){
+                            layer.msg("文件名不能为空")
+                        } else {
+                            $.post('/opt/super/create', {filename: filename, isfolder: false}, function (rel) {
+                                //layer.msg(rel.msg);
+                                if (rel.code === 0) {
+                                    location.reload();
+                                }else {
+                                    layer.msg(rel.msg);
+                                }
+                            })
+                        }
+                        layer.close(index)
+                    });
+                }, function () {
+                    //文件按钮
+                    layer.msg('添加文件夹', {icon: 1});
+                    layer.alert('<input id="filename" type="text" name="title"  autocomplete="off" placeholder="文件夹名" class="layui-input">', {
+                        skin: 'layui-layer-molv' //样式类名
+                        , closeBtn: 0
+                    }, function (index, layero) {
+                        var filename = $(layero.find('#filename')).val();
+                        if (filename === ''){
+                            layer.msg("文件夹名不能为空")
+                        } else {
+                            $.post('/opt/super/create', {filename: filename, isfolder: true}, function (rel) {
+                                //layer.msg(rel.msg);
+                                if (rel.code === 0) {
+                                    location.reload();
+                                }else {
+                                    layer.msg(rel.msg);
+                                }
+                            })
+                        }
+                        layer.close(index)
+                    });
+                });
+            })
+
             $('#refresh-cache-btn').click(function () {
                 $.ajax({
                     url: '/main/updatecache',
@@ -397,6 +451,7 @@ layui.use(['layer', 'code'], function () {
                                         }
                                     })
                                 } else if (view_config.img.includes(_type)) {
+                                    //图片预览
                                     function getImageWidth(url, callback) {
                                         var img = new Image();
                                         img.src = url;
@@ -418,6 +473,7 @@ layui.use(['layer', 'code'], function () {
                                             type: 1,
                                             title: false,
                                             offset: 'auto',
+                                            closeBtn: 0, //不显示关闭按钮
                                             area: [w + 'px', h + 'px'],
                                             shadeClose: true,
                                             content: '<div><img style="max-width: 100%;max-height: 100%" src="' + _url + '"></div>'
@@ -440,6 +496,14 @@ layui.use(['layer', 'code'], function () {
                                             layer.msg(rel.msg)
                                         }
                                     })
+                                }  else if (_type === "PDF"){
+                                    var encodePath = encodeURIComponent(_path);
+                                    layer.open({
+                                        type: 2,
+                                        content: "/document/pdf/view?path=" + encodePath,
+                                        area: ['80%', '80%'],
+                                        maxmin: true
+                                    });
                                 } else {
                                     layer.msg("查看" + _type + "类型文件")
                                 }
@@ -621,7 +685,7 @@ layui.use(['layer', 'code'], function () {
                                         })
                                         $(this).find('i').html('&#xe658;');
                                         $(this).attr('data-is-favorite', true);
-                                        $(this).attr('title', '收藏');
+                                        $(this).attr('title', '取消收藏');
                                     } else {
                                         //取消收藏
                                         //console.log('取消收藏');
@@ -637,7 +701,7 @@ layui.use(['layer', 'code'], function () {
                                         })
                                         $(this).find('i').html('&#xe600;');
                                         $(this).attr('data-is-favorite', false);
-                                        $(this).attr('title', '取消收藏');
+                                        $(this).attr('title', '收藏');
                                     }
                                     console.log();
                                 })

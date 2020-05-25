@@ -75,6 +75,7 @@ layui.use(['element', 'layer'], function() {
                                         type: 1,
                                         title: false,
                                         offset: 'auto',
+                                        closeBtn: 0, //不显示关闭按钮
                                         area: [w + 'px', h + 'px'],
                                         shadeClose: true,
                                         content: '<div><img alt="'+path+'" style="max-width: 100%;max-height: 100%" src="' + _url + '"></div>'

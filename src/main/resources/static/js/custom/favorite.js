@@ -22,7 +22,7 @@ layui.use(['layer', 'element'], function () {
                   <button type="button" class="look-btn layui-btn layui-btn-normal layui-btn-xs">查看</button>\
                   <button type="button" class="remove-btn layui-btn layui-btn-warm layui-btn-xs">移除</button>\
                   <button type="button" class="layui-btn layui-btn-disabled layui-btn-xs">' +
-            time + '</button>\
+            time.substr(0,10) + '</button>\
 						    </div>\
 						  </div>\
 						</div>';
@@ -82,7 +82,21 @@ layui.use(['layer', 'element'], function () {
                                 if (length === 0) {
                                     //为文件操作
                                     console.log('文件查看');
-                                    layer.msg('文件查看未实现！')
+                                    // layer.msg('文件查看未实现！')
+                                    $.post('/file/view/text/code', {path: path}, function (rel) {
+                                        console.log(rel);
+                                        var e_code = $("<div>").text(rel.data).html();
+                                        layer.open({
+                                            type: 1,
+                                            title: false,
+                                            closeBtn: 0,
+                                            area: ['1000px', '560px'],
+                                            shadeClose: true,
+                                            content: '<pre lay-title="' + rel.ext + '" lay-height="500px" lay-skin="" lay-encode="true" class="layui-code">' + e_code + '</pre>'
+                                        });
+                                        layui.code(); //引用code方法
+
+                                    })
                                 } else {
                                     //文件夹
                                     console.log('文件夹查看');
