@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo1.dao.HideListMapper">
+<mapper namespace="xyz.jaign.filemanage.dao.HideListMapper">
 
     <insert id="insert">
         insert into hide_list(userid, hidetype, hidecontent, hidetime)
             value (#{userid}, #{hidetype}, #{hidecontent}, #{hidetime})
     </insert>
-    <select id="selectAll" resultType="com.example.demo1.entity.HideList">
+    <select id="selectAll" resultType="xyz.jaign.filemanage.entity.HideList">
         select *
         from hide_list
     </select>
-    <select id="selectById" resultType="com.example.demo1.entity.HideList">
+    <select id="selectById" resultType="xyz.jaign.filemanage.entity.HideList">
         select *
         from hide_list
         where id = #{id}
     </select>
-    <select id="selectByType" resultType="com.example.demo1.entity.HideList">
+    <select id="selectByType" resultType="xyz.jaign.filemanage.entity.HideList">
         select *
         from hide_list
         where userid = #{userid}
           and hidetype = #{type}
     </select>
-    <select id="selectContentAndType" resultType="com.example.demo1.entity.HideList">
+    <select id="selectContentAndType" resultType="xyz.jaign.filemanage.entity.HideList">
         select *
         from hide_list
         where userid = #{userid}

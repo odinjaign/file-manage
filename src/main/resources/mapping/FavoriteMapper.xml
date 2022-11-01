@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo1.dao.FavoriteMapper">
+<mapper namespace="xyz.jaign.filemanage.dao.FavoriteMapper">
 
 
 <insert id="insertFavorite">
     insert into favorite(userid, favoritepath, favoritetype, favoritetime)
     value (#{userid},#{favoritepath},#{favoritetype},now())
 </insert>
-    <select id="selectAll" resultType="com.example.demo1.entity.Favorite">
+    <select id="selectAll" resultType="xyz.jaign.filemanage.entity.Favorite">
         select * from favorite
     </select>
     <delete id="deleteFavorite">
         delete from favorite where userid=#{userid} and favoritepath=#{path}
     </delete>
 
-    <select id="selectFavoriteByPath" resultType="com.example.demo1.entity.Favorite">
+    <select id="selectFavoriteByPath" resultType="xyz.jaign.filemanage.entity.Favorite">
         select * from favorite where userid=#{userid} and favoritepath=#{path}
     </select>
 </mapper>

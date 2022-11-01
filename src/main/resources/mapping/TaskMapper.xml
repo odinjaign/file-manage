@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo1.dao.TaskMapper">
+<mapper namespace="xyz.jaign.filemanage.dao.TaskMapper">
 
-    <select id="selectAll" resultType="com.example.demo1.entity.Task">
+    <select id="selectAll" resultType="xyz.jaign.filemanage.entity.Task">
         select * from task
     </select>
 
-    <select id="selectTaskByID" resultType="com.example.demo1.entity.Task">
+    <select id="selectTaskByID" resultType="xyz.jaign.filemanage.entity.Task">
         select * from task where taskid=#{taskid}
     </select>
 

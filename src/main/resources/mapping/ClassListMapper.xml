@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo1.dao.ClassListMapper">
+<mapper namespace="xyz.jaign.filemanage.dao.ClassListMapper">
 
-    <select id="selectAll" resultType="com.example.demo1.entity.ClassList">
+    <select id="selectAll" resultType="xyz.jaign.filemanage.entity.ClassList">
         select *
         from class_list
         where userid = #{userid}
     </select>
-    <select id="selectByTypeAndUser" resultType="com.example.demo1.entity.ClassList">
+    <select id="selectByTypeAndUser" resultType="xyz.jaign.filemanage.entity.ClassList">
         select *
         from class_list
         where userid = #{userid}
